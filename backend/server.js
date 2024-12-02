@@ -29,7 +29,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.use(express.static("public"));
+app.use(express.static("public"));
 
 app.get("/", (_, res) => {
     res.send(`API is running at ${PORT}...`)
@@ -46,46 +46,46 @@ app.use(errorHandler)
 const server = app.listen(PORT, console.log(`Server has started at PORT ${PORT}`));
 
 
-// const io = new Server(server, {
-//     pingTimeout: 1200000,
-//     cors: "http://localhost:3000",
-// });
+const io = new Server(server, {
+    pingTimeout: 1200000,
+    cors: "http://localhost:3000",
+});
 
-// io.on("connection", (socket) => {
-//     console.log("Connected to socket.io");
+io.on("connection", (socket) => {
+    console.log("Connected to socket.io");
 
-//     socket.on("setup", (userData) => {
-//         socket.join(userData._id);
-//         console.log(userData._id);
-//         socket.emit("connected")
-//     })
+    socket.on("setup", (userData) => {
+        socket.join(userData._id);
+        console.log(userData._id);
+        socket.emit("connected")
+    })
 
-//     socket.on('join_chat', (room) => {
-//         socket.join(room);
-//         console.log("user joined room", room);
+    socket.on('join_chat', (room) => {
+        socket.join(room);
+        console.log("user joined room", room);
 
-//     });
+    });
 
-//     socket.on("new_message", ((newMessageRecieced) => {
-//         let chat = newMessageRecieced.chat;
-//         console.log(chat);
+    socket.on("new_message", ((newMessageRecieced) => {
+        let chat = newMessageRecieced.chat;
+        console.log(chat);
 
 
-//         if (!chat.users) return console.log("chat.users not defined");
+        if (!chat.users) return console.log("chat.users not defined");
 
-//         chat.users.forEach((user) => {
-//             if (user._id === newMessageRecieced.sender._id) return;
-//             socket.in(user._id).emit("message_recieved", newMessageRecieced)
-//         });
-//     }));
+        chat.users.forEach((user) => {
+            if (user._id === newMessageRecieced.sender._id) return;
+            socket.in(user._id).emit("message_recieved", newMessageRecieced)
+        });
+    }));
 
-//     socket.on("typing", (room) => socket.in(room).emit("typing"));
-//     socket.on("stop_typing", (room) => socket.in(room).emit("stop_typing"))
+    socket.on("typing", (room) => socket.in(room).emit("typing"));
+    socket.on("stop_typing", (room) => socket.in(room).emit("stop_typing"))
 
-//     socket.off("setup", () => {
-//         console.log("User disconnected");
-//         socket.leave(userData._id)
+    socket.off("setup", () => {
+        console.log("User disconnected");
+        socket.leave(userData._id)
 
-//     })
+    })
 
-// });
+});
