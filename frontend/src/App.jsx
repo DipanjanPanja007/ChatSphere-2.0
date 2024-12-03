@@ -6,7 +6,7 @@ import { Toaster } from './components/ui/toaster';
 
 function App() {
   return (
-    <div className="App">
+    <div className="min-h-screen bg-app-background bg-cover bg-center">
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/chats" element={<ChatPage />} />

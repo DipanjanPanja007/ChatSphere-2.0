@@ -47,16 +47,18 @@ const Login = () => {
                 withCredentials: true,
             });
 
-            console.log(response);
+            const responsedata = response.data
+
+            console.log(responsedata);
 
 
             // const userInfoForLocalStorage = await response.data.user.json()
 
-            localStorage.setItem("userInfo", JSON.stringify(response));
+            localStorage.setItem("userInfo", JSON.stringify(responsedata));
 
-            // console.log(`responseData : ${response}`);
+            console.log(`response : ${response}`);
 
-            if (!response) {
+            if (!responsedata) {
                 toast({
                     title: "Failed to register!",
                     variant: "destructive"
@@ -64,7 +66,7 @@ const Login = () => {
                 console.log("Failed to register!");
             }
 
-            setUser(response)
+            setUser(responsedata)
 
             toast({
                 title: "Login successful !",
@@ -79,11 +81,11 @@ const Login = () => {
 
 
         } catch (error) {
-            console.log("error: ", error)
             toast({
                 title: error.message,
                 variant: "destructive"
             });
+            console.log("error: ", error)
         } finally {
             setLoading(false);
         }

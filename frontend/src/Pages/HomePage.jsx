@@ -18,12 +18,12 @@ const HomePage = () => {
 
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen max-w-[600px] w-[90%] mx-auto">
-            <div className="bg-white border border-gray-300 rounded-lg p-4 w-full">
+        <div className="flex flex-col items-center pt-10 h-screen max-w-[600px] w-[90%] mx-auto  ">
+            <div className="bg-white border border-gray-300 rounded-lg p-4 w-full ">
                 <h1 className="text-3xl font-bold font-lato italic text-black text-center">ChatSphere</h1>
             </div>
 
-            <div className="bg-white border border-gray-300 rounded-lg p-0 w-full mt-3">
+            <div className="bg-white border border-gray-300 rounded-lg w-full mt-3 p-5">
                 <Tabs defaultValue="login">
                     <TabsList className="flex justify-between border-b border-gray-300">
                         <TabsTrigger value="login" className="w-1/2 py-2">Login</TabsTrigger>
