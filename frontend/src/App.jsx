@@ -1,15 +1,19 @@
-import { useState } from 'react'
-import './App.css'
-import { Button } from './components/ui/button'
+import './App.css';
+import { Routes, Route } from "react-router-dom";
+import HomePage from './Pages/HomePage';
+import ChatPage from './Pages/ChatPage';
+import { Toaster } from './components/ui/toaster';
 
 function App() {
-
   return (
-    <>
-      <h1 className='bg-sky-700 font-bold underline'>ChatSphere</h1>
-      <Button className='bg-amber-400'>Hello Jii</Button>
-    </>
-  )
+    <div className="App">
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/chats" element={<ChatPage />} />
+      </Routes>
+      <Toaster />
+    </div>
+  );
 }
 
-export default App
+export default App;

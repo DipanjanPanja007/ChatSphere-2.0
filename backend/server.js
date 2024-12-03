@@ -21,7 +21,7 @@ app.use(bodyParser.json())
 app.use(cookieParser());
 
 app.use(cors({
-    origin: "http://localhost:3000",                // Replace with your frontend's URL
+    origin: "http://localhost:5173",                // Replace with your frontend's URL
     methods: ["GET", "POST", "PUT", "DELETE"],      // Allowed HTTP methods
     credentials: true,                              // If using cookies or auth headers
 
@@ -48,7 +48,7 @@ const server = app.listen(PORT, console.log(`Server has started at PORT ${PORT}`
 
 const io = new Server(server, {
     pingTimeout: 1200000,
-    cors: "http://localhost:3000",
+    cors: "http://localhost:5173",
 });
 
 io.on("connection", (socket) => {
