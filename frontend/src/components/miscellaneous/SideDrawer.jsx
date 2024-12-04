@@ -6,6 +6,7 @@ import axios from "axios";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import ProfileModal from "./ProfileModal";
 
 
 
@@ -55,7 +56,7 @@ const SideDrawer = () => {
                 {/* left tooltip for search user */}
                 <TooltipProvider>
                     <Tooltip>
-                        <TooltipTrigger onClick={openDrawer} className="cursor-pointer flex items-center space-x-2">
+                        <TooltipTrigger onClick={openDrawer} className="cursor-pointer flex items-center space-x-2 bg-slate-200 px-4 py-2 rounded-md">
                             <i className="fa-solid fa-magnifying-glass text-lg"></i>
                             <span className="hidden md:inline-block">Search User</span>
                         </TooltipTrigger>
@@ -66,32 +67,65 @@ const SideDrawer = () => {
                 </TooltipProvider>
 
                 {/* middle heading */}
-                <h2 fontSize={"2xl"} className="text-center"  >
+                <h2 className="text-center text-3xl"  >
                     ChatSphere
                 </h2>
 
                 {/* right notification and userinfo */}
-                <div>
+                <div className="flex flex-row">
                     {/* for notifications  */}
-                    {/* <DropdownMenu>
-                        <DropdownMenuTrigger>Open</DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
+                    <DropdownMenu  >
+                        <DropdownMenuTrigger className="p-3 outline-none">
+                            <i className="fa-solid fa-bell text-xl"></i>
+                            {
+                                notification.length ?
+                                    (<span>&#40;{notification.length}&#41;</span>)
+                                    : (<></>)
+                            }
+                        </DropdownMenuTrigger>
+
+                        <DropdownMenuContent className="px-3 py-1.5" >
+                            {
+                                !notification.length && "No New Messages"
+                            }
+                            {
+                                notification.map((noti) => (
+                                    <DropdownMenuLabel
+                                        cursor={"pointer"}
+                                        key={noti._id}
+                                        className="px-3 py-1.5"
+                                        onClick={() => {
+                                            setSelectedChat(noti.chat);
+                                            setNotification(notification.filter((n) => n !== noti));
+                                        }}
+                                    >
+                                        {
+                                            noti.chat.isGroupChat ?
+                                                `New Message from ${noti.chat.chatName}` :
+                                                `New Message from ${getSender(user, noti.chat.users)}`
+                                        }
+                                    </DropdownMenuLabel>
+
+                                ))
+                            }
+                            {/* <DropdownMenuSeparator /> */}
                         </DropdownMenuContent>
-                    </DropdownMenu> */}
+                    </DropdownMenu>
 
                     {/* for userinfo */}
                     <DropdownMenu>
-                        <DropdownMenuTrigger className="flex items-center space-x-2">
+                        <DropdownMenuTrigger className="flex items-center space-x-2 outline-none bg-slate-200 px-4 py-2 hover:bg-slate-300 rounded-md">
                             <Avatar className="w-8 h-8">
-                                <AvatarImage src={user.data.user.profilePic} />
+                                <AvatarImage src={user.data.user.profilePic} className="rounded-full mx-auto object-cover" />
                                 <AvatarFallback>User</AvatarFallback>
                             </Avatar>
-                            <i className="fa-solid fa-angle-down text-gray-600"></i>
+                            <i className="fa-solid fa-angle-down text-slate-800" />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuLabel>My Profile</DropdownMenuLabel>
+                        <DropdownMenuContent className="px-3 py-1.5">
+                            <ProfileModal user={user.data.user}>
+                                <DropdownMenuLabel>My Profile</DropdownMenuLabel>
+                            </ProfileModal>
+
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={logoutHandler}>Logout<i class="fa-solid fa-right-from-bracket" /></DropdownMenuItem>
                         </DropdownMenuContent>
