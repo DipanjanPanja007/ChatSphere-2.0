@@ -25,7 +25,7 @@ const Login = () => {
         if (!info.email.trim() || !info.password.trim()) {
             toast({
                 title: "All fields are required!",
-                variant: "destructive"
+                variant: "error"
             });
             return;
         }
@@ -61,7 +61,7 @@ const Login = () => {
             if (!responsedata) {
                 toast({
                     title: "Failed to register!",
-                    variant: "destructive"
+                    variant: "error"
                 });
                 console.log("Failed to register!");
             }
@@ -70,6 +70,7 @@ const Login = () => {
 
             toast({
                 title: "Login successful !",
+                variant: "success"
             });
             setInfo({
                 email: "",
@@ -83,7 +84,7 @@ const Login = () => {
         } catch (error) {
             toast({
                 title: error.message,
-                variant: "destructive"
+                variant: "error"
             });
             console.log("error: ", error)
         } finally {

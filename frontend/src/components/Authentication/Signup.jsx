@@ -24,7 +24,7 @@ const Signup = () => {
         if (info.password !== info.confirmPassword) {
             toast({
                 title: "Passwords do not match!",
-                variant: "destructive"
+                variant: "error"
             });
             return;
         }
@@ -57,6 +57,7 @@ const Signup = () => {
             // Handle success (e.g., redirect or show success message)
             toast({
                 title: "Registration Successful! Go to login",
+                variant: "success"
             });
             // Optionally reset the form
             setInfo({
@@ -73,7 +74,7 @@ const Signup = () => {
             console.log("error: ", error)
             toast({
                 title: error.message,
-                variant: "destructive"
+                variant: "error"
             });
         } finally {
             setLoading(false);

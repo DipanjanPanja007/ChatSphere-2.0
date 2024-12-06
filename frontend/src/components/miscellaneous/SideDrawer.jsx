@@ -38,7 +38,9 @@ const SideDrawer = () => {
 
     const handleSearch = async () => {
         if (!search) {
-            toast({ title: "Please Enter something in Search" });
+            toast({
+                title: "Please Enter something in Search"
+            });
             return;
         }
         try {
@@ -53,7 +55,7 @@ const SideDrawer = () => {
         } catch (error) {
             toast({
                 title: "Error occurred while searching user",
-                varient: "destructive"
+                variant: "error"
             });
         } finally {
             setLoading(false);
@@ -88,7 +90,7 @@ const SideDrawer = () => {
         } catch (error) {
             toast({
                 title: "Error occoured while fetching chats",
-                varient: "destructive"
+                variant: "error"
             });
         } finally {
             setLoadingChat(false);

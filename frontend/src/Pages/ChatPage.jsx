@@ -7,7 +7,7 @@ import { } from '../Context/ChatProvider'
 
 const ChatPage = () => {
     const { user } = ChatState();
-    const [fetchAgain, setFetchAgain] = useState(false);
+    const [fetchAgain, setFetchAgain] = useState(false);      // true if fetching chats is needed
 
     return (
         <div className="w-full">
