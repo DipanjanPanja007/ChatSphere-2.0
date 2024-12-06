@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { ChatState } from "@/Context/ChatProvider";
-import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import ProfileModal from "./ProfileModal";
+import Loading from "./Loading";
+import { useToast } from "@/hooks/use-toast";
+import UserListItem from "./UserListItem";
 
 
 
@@ -14,13 +16,18 @@ const SideDrawer = () => {
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [loadingChat, setLoadingChat] = useState(false);
     const [isDrawerOpen, setDrawerOpen] = useState(false);
 
     const { user, setUser, setSelectedChat, chats, setChats, notification, setNotification } = ChatState();
     const navigate = useNavigate();
-    const toast = useToast();
+    const { toast } = useToast();
 
-    const openDrawer = () => setDrawerOpen(true);
+    const openDrawer = () => {
+        setDrawerOpen(true)
+        setSearch("")
+        setSearchResult([])
+    };
     const closeDrawer = () => setDrawerOpen(false);
 
     const logoutHandler = () => {
@@ -36,15 +43,55 @@ const SideDrawer = () => {
         }
         try {
             setLoading(true);
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URI}/api/user?search=${search}`, {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/user?search=${search}`, {
                 headers: { Authorization: `Bearer ${user.data.accessToken}`, "Content-Type": "application/json" },
                 credentials: "include",
             });
+            // console.log(response.data.data.users);
+
             setSearchResult(response.data.data.users);
         } catch (error) {
-            toast({ title: "Error occurred while searching user" });
+            toast({
+                title: "Error occurred while searching user",
+                varient: "destructive"
+            });
         } finally {
             setLoading(false);
+        }
+    };
+
+
+    const accessChat = async (userId) => {
+        try {
+            setLoadingChat(true);
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.data.accessToken}`,
+                    'Content-Type': 'application/json',
+                }
+            };
+
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URI}/api/chat`,
+                { userId },
+                config
+            );
+
+
+
+
+            if (!chats.find((c) => c._id === response.data._id)) setChats([response.data, ...chats])
+
+            setSelectedChat(response.data)
+
+
+        } catch (error) {
+            toast({
+                title: "Error occoured while fetching chats",
+                varient: "destructive"
+            });
+        } finally {
+            setLoadingChat(false);
         }
     };
 
@@ -163,19 +210,21 @@ const SideDrawer = () => {
                         />
                         <button
                             onClick={handleSearch}
-                            className="w-full p-2 bg-blue-500 text-white rounded"
+                            className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mb-4"
                         >
                             Search
                         </button>
-                        {loading ? (
-                            <p className="text-center mt-4">Loading...</p>
-                        ) : (
-                            searchResult.map((user) => (
-                                <div key={user._id} className="p-2 border-b cursor-pointer hover:bg-gray-100">
-                                    {user.name}
-                                </div>
-                            ))
-                        )}
+                        {loading ?
+                            (<Loading />) : (
+                                searchResult.map((user) => (
+                                    <UserListItem
+                                        key={user._id}
+                                        user={user}
+                                        handleFunction={() => accessChat(user._id)}
+                                    />
+                                ))
+                            )
+                        }
                     </div>
                 </div>
             </div>
