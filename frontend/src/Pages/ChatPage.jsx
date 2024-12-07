@@ -16,18 +16,10 @@ const ChatPage = () => {
 
             <div className="flex justify-between w-full h-[91vh] p-4">
                 {/* MyChats Component */}
-                {user && (
-                    <div className="flex-[3] border-r border-gray-200 pr-4">
-                        <MyChats fetchAgain={fetchAgain} />
-                    </div>
-                )}
+                {user && (<MyChats fetchAgain={fetchAgain} />)}
 
                 {/* ChatBox Component */}
-                {user && (
-                    <div className="flex-[7] pl-4">
-                        <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
-                    </div>
-                )}
+                {user && (<ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />)}
             </div>
         </div>
     );

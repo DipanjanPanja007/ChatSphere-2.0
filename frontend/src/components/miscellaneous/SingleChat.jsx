@@ -5,6 +5,10 @@ import React, { useEffect, useState } from 'react'
 import UpdateGroupChatModal from './UpdateGroupChatModal';
 import ProfileModal from './ProfileModal';
 import { io } from 'socket.io-client';
+import ScrollableChat from './ScrollableChat.jsx';
+import { Input } from '../ui/input';
+import axios from 'axios';
+
 
 const ENDPOINT = import.meta.env.VITE_BACKEND_URI;
 let socket, selectedChatCompare;
@@ -181,7 +185,33 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
 
                         {/* Main Chat Container */}
+                        <div
+                            className="flex flex-col justify-between w-full h-[93%] rounded-lg p-3 bg-gray-100"
+                        >
+                            {/* Chat Messages Container */}
+                            <div className='flex mb-3 overflow-y-auto'>
+                                {loading ? (
+                                    <>Loading Chats .....</>
+                                ) : (
+                                    <ScrollableChat messages={messages} />
+                                )}
+                            </div>
 
+                            {/* Input Field */}
+                            <form onKeyDown={sendMessage} isRequired className='bg-slate-100 rounded-sm' >
+                                {isTyping ? (
+                                    <div>Typing....</div>
+                                ) : null}
+                                <Input
+                                    variant={"filled"}
+                                    backgroundColor={"#C2C2C2"}
+                                    placeholder="Kuch lik na...."
+                                    onChange={typingHandler}
+                                    value={newMessage}
+                                />
+                            </form>
+
+                        </div>
 
                     </>
                 ) : (

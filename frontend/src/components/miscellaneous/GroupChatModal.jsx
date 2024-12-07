@@ -72,7 +72,7 @@ const GroupCharModal = ({ children }) => {
     const handleGroup = (userToAdd) => {
         if (selectedUsers.some((user) => user._id === userToAdd._id)) {
             toast({
-                title: "Error occoured",
+                title: "User already added",
                 variant: "error",
             })
             return;
@@ -83,16 +83,14 @@ const GroupCharModal = ({ children }) => {
     const handelSubmit = async () => {
         if (!groupChatName || !selectedUsers) {
             toast({
-                title: "Error occoured",
-                description: "Fill all the fields",
+                title: "Fill all the fields",
                 variant: "error",
             })
             return;
         }
         if (selectedUsers.length < 2) {
             toast({
-                title: "Error occoured",
-                description: "Group Chat needs atleast 3 people bro !!! ",
+                title: "Group Chat needs atleast 3 people bro !!! ",
                 variant: "error",
             })
             return;

@@ -16,12 +16,12 @@ const ProfileModal = ({ user, children }) => {
         <div>
 
             <Dialog>
-                <DialogTrigger>
+                <DialogTrigger className='px-2 py-1 rounded-md hover:bg-slate-200'>
                     {
                         children ?
                             (<span >{children}</span>)
                             :
-                            (<span>hello</span>)
+                            (<i class="fa-regular fa-eye"></i>)
                     }
                 </DialogTrigger>
                 <DialogContent>
@@ -31,7 +31,7 @@ const ProfileModal = ({ user, children }) => {
                             <img src={user.profilePic}
                                 className='w-60 h-60 rounded-full mx-auto object-cover my-7'
                             />
-                            <h2 className='text-center text-white text-xl'>{user.email}</h2>
+                            <h2 className='text-center text-black text-xl mb-2'>{user.email}</h2>
                         </DialogDescription>
                     </DialogHeader>
                 </DialogContent>

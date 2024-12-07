@@ -34,7 +34,7 @@ const setSenderMargin = (messages, currMessage, index, userId) => {
     if ((index < messages.length - 1) && (
         ((messages[index + 1].sender._id === currMessage.sender._id) &&
             (messages[index].sender._id !== userId)
-        ))) return 33;
+        ))) return 40;
 
     else if (
         ((index < messages.length - 1) &&
