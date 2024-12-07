@@ -1,13 +1,22 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { isSameUser, setSenderMargin } from '@/config/ChatLogic'
 import { ChatState } from '@/Context/ChatProvider'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip"
 
-
 const ScrollableChat = ({ messages }) => {
     const { user } = ChatState()
+    const messagesEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
     return (
         <div className="flex flex-col scroll-smooth h-full w-full">
             <ScrollArea className="px-4 w-full overflow-y-auto">
@@ -53,12 +62,9 @@ const ScrollableChat = ({ messages }) => {
                             </span>
                         </div>
                     ))}
+                <div ref={messagesEndRef} />
             </ScrollArea>
         </div>
-
-
-
-
     )
 }
 
