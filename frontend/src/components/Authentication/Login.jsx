@@ -64,6 +64,7 @@ const Login = () => {
                     variant: "error"
                 });
                 console.log("Failed to register!");
+                return;
             }
 
             setUser(responsedata)

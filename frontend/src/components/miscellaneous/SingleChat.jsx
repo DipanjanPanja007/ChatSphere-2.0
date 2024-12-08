@@ -45,6 +45,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 if (!notification.includes(newMessageReceived)) {
                     setNotification([newMessageReceived, ...notification])
                     setFetchAgain(!fetchAgain)
+                    console.log("notification: ", notification.length);
+
                 }
             }
             else {
@@ -94,7 +96,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
 
     const sendMessage = async (event) => {
-        if (event.key === "Enter" && newMessage.trim()) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            if (newMessage.trim() === "") {
+                toast({
+                    title: "Message can't be empty",
+                })
+                return;
+            }
             socket.emit("stop_typing", selectedChat._id)
             try {
                 setNewMessage("")
@@ -109,7 +118,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     credentials: "include",
                 });
 
-                console.log(data);
+                // console.log(data);
 
                 socket.emit('new_message', data.data)
 
@@ -200,7 +209,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             </div>
 
                             {/* Input Field */}
-                            <form onKeyDown={sendMessage} isRequired className='bg-slate-100 rounded-sm' >
+                            <form onKeyDown={sendMessage} className='bg-slate-100 rounded-sm' >
                                 {isTyping ? (
                                     <div>Typing....</div>
                                 ) : null}

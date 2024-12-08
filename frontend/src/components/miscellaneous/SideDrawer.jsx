@@ -9,6 +9,7 @@ import ProfileModal from "./ProfileModal";
 import Loading from "./Loading";
 import { useToast } from "@/hooks/use-toast";
 import UserListItem from "./UserListItem";
+import { getSender } from "@/config/ChatLogic";
 
 
 
@@ -140,9 +141,8 @@ const SideDrawer = () => {
                             {
                                 notification.map((noti) => (
                                     <DropdownMenuLabel
-                                        cursor={"pointer"}
                                         key={noti._id}
-                                        className="px-3 py-1.5"
+                                        className="px-3 py-1.5 cursor-pointer"
                                         onClick={() => {
                                             setSelectedChat(noti.chat);
                                             setNotification(notification.filter((n) => n !== noti));
