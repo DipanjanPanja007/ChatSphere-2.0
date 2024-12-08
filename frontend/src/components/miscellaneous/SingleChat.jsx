@@ -109,6 +109,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     credentials: "include",
                 });
 
+                console.log(data);
+
                 socket.emit('new_message', data.data)
 
                 setMessages([...messages, data.data])
@@ -158,7 +160,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     <>
                         {/* Chat Header */}
                         <div
-                            className="text-[24px] max-md:text-[28px] px-2 w-full font-sans flex items-center justify-between align-middle"
+                            className="text-[24px] max-md:text-[28px] px-2 w-full mb-1 font-sans flex items-center justify-between align-middle"
                         >
                             <button
                                 className="flex md:hidden p-2 bg-slate-400 hover:bg-slate-500 "
@@ -204,7 +206,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                 ) : null}
                                 <Input
                                     variant={"filled"}
-                                    backgroundColor={"#C2C2C2"}
+                                    className='bg-white p-2'
                                     placeholder="Kuch lik na...."
                                     onChange={typingHandler}
                                     value={newMessage}

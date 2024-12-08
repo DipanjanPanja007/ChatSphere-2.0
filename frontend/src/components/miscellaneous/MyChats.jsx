@@ -43,10 +43,10 @@ const MyChats = ({ fetchAgain }) => {
              flex-col items-center p-3 bg-white w-full md:w-[31%] h-full rounded-lg border border-gray-300`}
         >
             {/* Header */}
-            <div className="flex items-center justify-between w-full pb-3 px-3 text-[30px] md:text-[17px] lg:text-[20px] font-medium ">
+            <div className="flex items-center justify-between w-full pb-3 px-1 text-[33px] md:text-[17px] lg:text-[20px] font-medium ">
                 <span>My Chats</span>
                 <GroupChatModal>
-                    <Button className="flex items-center text-[17px] md:text-[10px] lg:text-[17px] font-medium px-4 py-1 rounded-lg bg-gray-200 hover:bg-teal-600 hover:text-white">
+                    <Button className="flex items-center text-[17px] md:text-[10px] lg:text-[17px] font-medium px-5 py-1 rounded-lg text-black bg-gray-200 hover:bg-teal-600 hover:text-white">
                         New Group Chat <i className="fa-solid fa-plus ml-2"></i>
                     </Button>
                 </GroupChatModal>
