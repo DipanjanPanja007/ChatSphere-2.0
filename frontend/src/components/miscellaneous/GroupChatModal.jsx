@@ -48,7 +48,7 @@ const GroupCharModal = ({ children }) => {
                 credentials: "include",
             });
 
-            console.log("user array :response from searched user: ", data.data.users);
+            // console.log("user array :response from searched user: ", data.data.users);
             setSearchResult(data.data.users);
 
 

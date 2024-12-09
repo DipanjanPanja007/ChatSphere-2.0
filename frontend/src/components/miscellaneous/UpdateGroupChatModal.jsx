@@ -3,6 +3,7 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -81,12 +82,8 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
 
         if (selectedChat.groupAdmin._id !== user.data.user._id && userToRemove._id !== user.data.user._id) {
             toast({
-                title: "Error occoured",
-                description: "Only Admin can remove members",
-                status: "error",
-                duration: 5000,
-                isClosable: true,
-                position: "bottom-middle"
+                title: "Only Admin can remove members",
+                variant: "error",
             })
             return;
         }
@@ -107,17 +104,24 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
             )
 
             userToRemove._id === user.data.user._id ? setSelectedChat() : setSelectedChat(data.data)
-            toast({
-                title: `User ${userToRemove.name} removed successfully`,
-                variant: "success",
-            })
+            if (userToRemove._id === user.data.user._id) {
+                toast({
+                    title: `You left the group`,
+                    variant: "success",
+                })
+            }
+            else {
+                toast({
+                    title: `User ${userToRemove.name} removed successfully`,
+                    variant: "success",
+                })
+            }
             setFetchAgain(!fetchAgain)
             fetchMessages();
             setLoading(false)
         } catch (error) {
             toast({
-                title: "Error occoured",
-                description: "Someting went wrong while adding user into group",
+                title: "Someting went wrong while adding user into group",
                 variant: "error",
             })
         }
@@ -155,8 +159,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
             })
         } catch (error) {
             toast({
-                title: "Error occoured",
-                description: "Failed to update groupChat name",
+                title: "Failed to update groupChat name",
                 variant: "error",
             })
         } finally {
@@ -260,6 +263,13 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                             }
                         </DialogDescription>
                     </DialogHeader>
+                    <DialogFooter>
+                        <Button
+                            className='bg-red-500 text-white hover:bg-red-600'
+                            onClick={() => handleRemoveUser(user.data.user)}>
+                            Leave Group
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </div>

@@ -1,7 +1,7 @@
 import { getSender, getSenderFull } from '@/config/ChatLogic';
 import { ChatState } from '@/Context/ChatProvider';
 import { useToast } from '@/hooks/use-toast';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import UpdateGroupChatModal from './UpdateGroupChatModal';
 import ProfileModal from './ProfileModal';
 import { io } from 'socket.io-client';
@@ -15,6 +15,7 @@ let socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
+    const inputRef = useRef(null);
     const { toast } = useToast();
     const { user, selectedChat, setSelectedChat, notification, setNotification } = ChatState();
     const [messages, setMessages] = useState([]);
@@ -31,11 +32,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         socket.on("connected", () => setSocketConnected(true))
         socket.on("typing", () => setIsTyping(true))
         socket.on("stop_typing", () => setIsTyping(false))
+
+
     }, [])
 
     useEffect(() => {
         fetchMessages();
         selectedChatCompare = selectedChat;          // for notification/show logic...
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
     }, [selectedChat])
 
     useEffect(() => {
@@ -169,10 +175,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     <>
                         {/* Chat Header */}
                         <div
-                            className="text-[24px] max-md:text-[28px] px-2 w-full mb-1 font-sans flex items-center justify-between align-middle"
+                            className="text-[24px] max-md:text-[28px] w-full mb-2 px-2 font-sans flex items-center justify-between align-middle"
                         >
                             <button
-                                className="flex md:hidden p-2 bg-slate-400 hover:bg-slate-500 "
+                                className="flex md:hidden py-2 px-3 bg-slate-300 hover:bg-slate-400 rounded-md "
                                 onClick={() => setSelectedChat("")}
                             >
                                 <i className="fa-solid fa-arrow-left"></i>
@@ -197,7 +203,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
                         {/* Main Chat Container */}
                         <div
-                            className="flex flex-col justify-between w-full h-[93%] rounded-lg p-3 bg-gray-100"
+                            className="flex flex-col justify-between w-full h-[91%] rounded-lg p-3 bg-gray-100"
                         >
                             {/* Chat Messages Container */}
                             <div className='flex mb-3 overflow-y-auto'>
@@ -211,7 +217,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             {/* Input Field */}
                             <form onKeyDown={sendMessage} className='bg-slate-100 rounded-sm' >
                                 {isTyping ? (
-                                    <div>Typing....</div>
+                                    <div>Type your message...</div>
                                 ) : null}
                                 <Input
                                     variant={"filled"}
@@ -219,6 +225,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                     placeholder="Kuch lik na...."
                                     onChange={typingHandler}
                                     value={newMessage}
+                                    ref={inputRef}
+                                    autofocus={true}
                                 />
                             </form>
 
