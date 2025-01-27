@@ -33,6 +33,8 @@ const GroupCharModal = ({ children }) => {
 
     const handelSearch = async (query) => {
         if (!query) {
+            setSearchResult([])
+            setSearch("")
             return;
         }
         setSearch(query)
@@ -81,16 +83,16 @@ const GroupCharModal = ({ children }) => {
     };
 
     const handelSubmit = async () => {
-        if (!groupChatName || !selectedUsers) {
+        if (!groupChatName) {
             toast({
-                title: "Fill all the fields",
+                title: "A group name is necessary !! ",
                 variant: "error",
             })
             return;
         }
         if (selectedUsers.length < 2) {
             toast({
-                title: "Group Chat needs atleast 3 people bro !!! ",
+                title: `Add at least ${2 - selectedUsers.length} more to create a group bro!!! `,
                 variant: "error",
             })
             return;
@@ -141,6 +143,7 @@ const GroupCharModal = ({ children }) => {
     const handleClose = () => {
         setSearchResult([]);
         setSearch("")
+        setSelectedUsers([]);
     };
 
 
