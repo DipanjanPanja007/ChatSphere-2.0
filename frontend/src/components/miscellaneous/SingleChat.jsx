@@ -86,25 +86,24 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     // Handle incoming messages and notifications
     useEffect(() => {
         const messageListener = (newMessageReceived) => {
-            // console.log('newMessageReceived:', newMessageReceived);
             if (!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id) {
-                // Add to notifications if it belongs to a different chat or no chat is selected
+                // Notification logic
                 if (!notification.find((msg) => msg._id === newMessageReceived._id)) {
                     setNotification([newMessageReceived, ...notification]);
                     setFetchAgain(!fetchAgain);
                 }
             } else {
-                // Append message to the current chat
                 setMessages((prev) => [...prev, newMessageReceived]);
             }
         };
 
-        socket.on('message_recieved', messageListener);
+        socket.on("message_recieved", messageListener);
 
+        // Cleanup function for this effect
         return () => {
-            socket.off('message_recieved', messageListener);
+            socket.off("message_recieved", messageListener);
         };
-    }, [fetchAgain, notification, setFetchAgain]);
+    }, [selectedChat, notification, fetchAgain, messages, newMessage]);
 
     // Handle typing logic
     const typingHandler = (e) => {
