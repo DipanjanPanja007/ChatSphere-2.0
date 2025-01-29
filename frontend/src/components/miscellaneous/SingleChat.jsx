@@ -8,6 +8,7 @@ import { io } from 'socket.io-client';
 import ScrollableChat from './ScrollableChat.jsx';
 import { Input } from '../ui/input';
 import axios from 'axios';
+import send_btn from '../../../public/send_btn.png';
 
 const ENDPOINT = import.meta.env.VITE_BACKEND_URI;
 let socket, selectedChatCompare;
@@ -141,44 +142,44 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     };
 
     // Send message
-    const sendMessage = async (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
+    const sendMessage = async () => {
+        // if (event.key === 'Enter') {
+        // event.preventDefault();
 
-            if (newMessage.trim() === '') {
-                toast({
-                    title: "Message can't be empty",
-                });
-                return;
-            }
-
-            socket.emit('stop_typing', selectedChat._id);
-
-            try {
-                setNewMessage('');
-                const { data } = await axios.post(
-                    `${ENDPOINT}/api/message`,
-                    {
-                        content: newMessage,
-                        chatId: selectedChat._id,
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${user.data.accessToken}`,
-                        },
-                    }
-                );
-
-                socket.emit('new_message', data.data);
-                setMessages((prev) => [...prev, data.data]);
-            } catch (error) {
-                toast({
-                    title: 'Error occurred while sending message',
-                    variant: 'error',
-                });
-                console.error(`Error: ${error.message}`);
-            }
+        if (newMessage.trim() === '') {
+            toast({
+                title: "Message can't be empty",
+            });
+            return;
         }
+
+        socket.emit('stop_typing', selectedChat._id);
+
+        try {
+            setNewMessage('');
+            const { data } = await axios.post(
+                `${ENDPOINT}/api/message`,
+                {
+                    content: newMessage,
+                    chatId: selectedChat._id,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${user.data.accessToken}`,
+                    },
+                }
+            );
+
+            socket.emit('new_message', data.data);
+            setMessages((prev) => [...prev, data.data]);
+        } catch (error) {
+            toast({
+                title: 'Error occurred while sending message',
+                variant: 'error',
+            });
+            console.error(`Error: ${error.message}`);
+        }
+        // }
     };
 
     // Fetch messages for the selected chat
@@ -202,6 +203,20 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             console.error(`Error: ${error.message}`);
         }
     };
+
+    // Send message by pressing enter
+    const sendMessageByEnter = async (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            sendMessage();
+        }
+    };
+
+    // Send message by clicking the send button
+    const sendMessageByButton = async (event) => {
+        event.preventDefault()
+        sendMessage();
+    }
 
     return (
         <>
@@ -240,7 +255,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         </div>
 
                         {/* Input Field */}
-                        <form onKeyDown={sendMessage} className="bg-slate-100 rounded-sm">
+                        <form onKeyDown={sendMessageByEnter} className="bg-slate-100 rounded-sm flex">
                             {isTyping ? <div>Typing...</div> : null}
                             <Input
                                 variant={'filled'}
@@ -251,6 +266,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                 ref={inputRef}
                                 autoFocus
                             />
+                            <button
+                                type="submit"
+                                onClick={sendMessageByButton}
+                                className="rounded-full ml-2 bg-white "
+                            >
+                                <img src={send_btn} className="w-10 h-9 rounded-full" alt="Send Button" />
+                            </button>
+
                         </form>
                     </div>
                 </>
