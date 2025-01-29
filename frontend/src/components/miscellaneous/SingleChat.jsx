@@ -71,7 +71,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
 
 
-    // Fetch messages when a chat is selected
+    // Fetch messages when a chat is selected and remove notificaiton of that chat
     useEffect(() => {
         if (selectedChat) {
             fetchMessages();
@@ -81,17 +81,29 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 inputRef.current.focus();
             }
         }
+        // Remove notification of the selected chat
+        if (notification.length > 0) {
+            setNotification((prevNotifications) => prevNotifications.filter(noti => noti.chat._id !== selectedChat._id));
+        }
+
     }, [selectedChat]);
 
     // Handle incoming messages and notifications
     useEffect(() => {
         const messageListener = (newMessageReceived) => {
+            // console.log("newMessageReceived:", newMessageReceived.chat._id);
+            // console.log("notification->array->chatid:", notification[0]?.chat._id);
             if (!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id) {
                 // Notification logic
                 if (!notification.find((msg) => msg._id === newMessageReceived._id)) {
-                    setNotification([newMessageReceived, ...notification]);
-                    setFetchAgain(!fetchAgain);
+                    // add latest notification to the top and remove the previous notification of the same chat
+                    setNotification((prevNotifications) => [
+                        newMessageReceived,
+                        ...prevNotifications.filter((msg) => msg.chat._id !== newMessageReceived.chat._id)
+                    ]);
+                    setFetchAgain((prev) => !prev);
                 }
+
             } else {
                 setMessages((prev) => [...prev, newMessageReceived]);
             }
