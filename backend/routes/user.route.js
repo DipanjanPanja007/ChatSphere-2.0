@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { registerUser, loginUser, allUsers } from "../controllers/user.controller.js"
+import { registerUser, loginUser, allUsers, reqOTP } from "../controllers/user.controller.js"
 import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWT } from "../middleware/auth.middleware.js"
 
@@ -9,6 +9,8 @@ router.route('/')
     .get(verifyJWT, allUsers)
 
 router.post('/login', loginUser);
+
+router.get('/otp', reqOTP);
 
 
 

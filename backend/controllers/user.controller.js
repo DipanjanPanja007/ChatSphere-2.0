@@ -1,8 +1,11 @@
 import { User } from "../models/user.model.js"
+import { MemoryOtp } from "../models/memoryOtp.model.js"
 import asyncHandler from "express-async-handler";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { sendMail } from "../config/sendMail.js";
+
 
 
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -32,6 +35,55 @@ const generateAccessAndRefreshTokens = async (userId) => {
         );
     }
 };
+
+const generateOTP = () => {
+    const chars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    let otp = "";
+    for (let i = 0; i < 6; i++) {
+        otp += chars[Math.floor(Math.random() * 36)];
+    }
+    return otp;
+}
+
+const reqOTP = asyncHandler(async (req, res) => {
+
+    /*
+     * step#1: take email from req.body
+     * step#2: generate OTP
+     * step#3: send OTP to email
+     * step#4: save email and OTP in memoryOtp collection
+     * step#5: send response
+     */
+
+    // step#1: take email from req.body
+    const { email } = req.body;
+    console.log(`email received: ${email}`);
+
+    // step#2: generate OTP
+    let otp = generateOTP();
+    console.log(`OTP : ${otp}`);
+
+    // step#3: send OTP to email
+    sendMail(email, otp);
+
+    // step#4: save email and OTP in memoryOtp collection
+    let otpExists = await MemoryOtp.findOne({ email });
+    if (otpExists) {                                          // if already exists, delete it
+        await MemoryOtp.findOneAndDelete({ email });
+    }
+    let otpPlaced = await MemoryOtp.create({ email, otp });
+
+    if (!otpPlaced) {
+        throw new ApiError(500, "Something went wrong while saving OTP");
+    }
+
+    // step#5: send response
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, { email }, "OTP sent successfully")
+        )
+});
 
 const registerUser = asyncHandler(async (req, res) => {
 
@@ -95,7 +147,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // return info
     return res
-        .status(201)
+        .status(200)
         .json(
             new ApiResponse(200, createdUser, "User registered Successfully")
         )
@@ -210,4 +262,4 @@ const allUsers = asyncHandler(async (req, res) => {
         })
 })
 
-export { registerUser, loginUser, allUsers }
+export { reqOTP, registerUser, loginUser, allUsers }
