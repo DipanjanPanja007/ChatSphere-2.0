@@ -49,15 +49,22 @@ const reqOTP = asyncHandler(async (req, res) => {
 
     /*
      * step#1: take email from req.body
-     * step#2: generate OTP
-     * step#3: send OTP to email
-     * step#4: save email and OTP in memoryOtp collection
-     * step#5: send response
+     * step#2: make sure for same user already not exists 
+     * step#3: generate OTP
+     * step#4: send OTP to email
+     * step#5: save email and OTP in memoryOtp collection
+     * step#6: send response
      */
 
     // step#1: take email from req.body
     const { email } = req.body;
     console.log(`email received: ${email}`);
+
+    // step#2: make sure for same user already not exists 
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+        throw new ApiError(400, `User with email: ${email} already exists`)
+    }
 
     // step#2: generate OTP
     let otp = generateOTP();
@@ -88,28 +95,45 @@ const reqOTP = asyncHandler(async (req, res) => {
 const registerUser = asyncHandler(async (req, res) => {
 
     /*
-     * step#1: take input name, email, password... validation them -> not empty
-     * step#2: make sure for same user already not exists 
+     * step#1: take input name, email, password, otp ... validation them -> not empty
+     * step#2: check if OTP is correct or not
      * step#3: check for profilePicture given or not... ( from middleware )
      * step#4: create User object and send it after removing credentials
      */
 
     // step#1: take input name, email, password... 
-    const { name, email, password } = req.body;          // remove pic as we will send it through middleware
+    const { name, email, password, otp } = req.body;          // remove pic as we will send it through middleware
+    // console.log(`name: ${name}, email: ${email}, password: ${password}, otp: ${otp}`);
 
     // step#2: if any one not found, throw error: validation - not empty
-    if ([name, email, password].some((field) => field?.trim() === "")) {
+    if ([name, email, password, otp].some((field) => field?.trim() === "")) {
         throw new ApiError(400, "All fields are required...");
     }
 
 
-    // step#2: make sure for same user already not exists 
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-        throw new ApiError(400, `User with email: ${email} already exists`)
+
+
+    // step#3: check if OTP is correct or not
+    const otpExists = await MemoryOtp.findOne({ email });
+
+    if (!otpExists) {                // if otp expired or not exists
+        return res
+            .status(400)
+            .json(
+                new ApiResponse(400, null, "OTP expired Boss...")
+            )
     }
 
-    // step#3: check for profilePicture given or not... ( from middleware )
+    if (otpExists.otp !== otp) {       // if wrong otp
+        return res
+            .status(400)
+            .json(
+                new ApiResponse(200, null, "Incorrect OTP, try again...")
+            )
+    }
+
+
+    // step#4: check for profilePicture given or not... ( from middleware )
 
     // console.log("req.file: ", req.file);
     let profilePicPath = "";
@@ -124,7 +148,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
 
-    // step#4: create User object and send it after removing credentials
+    // step#5: create User object and send it after removing credentials
     const user = await User.create({
         name: name,
         email: email,
@@ -140,7 +164,7 @@ const registerUser = asyncHandler(async (req, res) => {
         "-password -refreshToken"
     )
 
-    // Step#8: check for user creation
+    // Step#6: check for user creation
     if (!createdUser) {
         throw new ApiError(500, "Something is wrong while registering you...");
     }

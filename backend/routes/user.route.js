@@ -10,7 +10,7 @@ router.route('/')
 
 router.post('/login', loginUser);
 
-router.get('/otp', reqOTP);
+router.post('/otp', reqOTP);
 
 
 
