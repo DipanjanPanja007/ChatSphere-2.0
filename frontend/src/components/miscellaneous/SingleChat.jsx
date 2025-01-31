@@ -8,7 +8,7 @@ import { io } from 'socket.io-client';
 import ScrollableChat from './ScrollableChat.jsx';
 import { Input } from '../ui/input';
 import axios from 'axios';
-import send_btn from '../../../public/send_btn.png';
+import send_btn from '../../public/send_btn.png';
 
 const ENDPOINT = import.meta.env.VITE_BACKEND_URI;
 let socket, selectedChatCompare;

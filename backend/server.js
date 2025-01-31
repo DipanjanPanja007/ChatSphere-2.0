@@ -43,7 +43,9 @@ app.use("/api/message", messageRoutes);
 app.use(notFound)
 app.use(errorHandler)
 
-const server = app.listen(PORT, console.log(`Server has started at PORT ${PORT}`));
+const server = app.listen(PORT, () => {
+    console.log(`Server has started at PORT ${PORT}`);
+});
 
 
 const io = new Server(server, {
