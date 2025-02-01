@@ -50,8 +50,13 @@ const server = app.listen(PORT, () => {
 
 const io = new Server(server, {
     pingTimeout: 1200000,
-    cors: process.env.FRONTEND_URI,
+    cors: {
+        origin: process.env.FRONTEND_URI,
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true,
+    },
 });
+
 
 io.on("connection", (socket) => {
     console.log("Connected to socket.io");
