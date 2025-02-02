@@ -3,12 +3,13 @@ import axios from 'axios';
 import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from 'react-router-dom';
 import { ChatState } from '../../Context/ChatProvider';
+import '../../App.css'
 
 
 
 const Login = () => {
 
-    const { user, setUser } = ChatState();
+    const { user, setUser, darkMode } = ChatState();
 
     const [info, setInfo] = useState({
         email: "",
@@ -18,6 +19,7 @@ const Login = () => {
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const [showPass, setShowPass] = useState(false);
+
 
     const handelClickPass = () => setShowPass(!showPass);
 
@@ -97,9 +99,9 @@ const Login = () => {
     };
 
     return (
-        <div className="flex flex-col gap-4 p-4 max-w-md mx-auto border rounded-md shadow-md ">
+        <div className={`flex flex-col gap-4 p-6 max-w-md mx-auto ${darkMode ? "dark-bg-black" : "bg-slate-100"}  rounded-md shadow-md `}>
             <div className="flex flex-col gap-2">
-                <label htmlFor="email" className="text-sm font-medium">
+                <label htmlFor="email" className={` ${darkMode ? "dark-font" : "light-font"} text-sm font-medium`}>
                     Email
                 </label>
                 <input
@@ -108,12 +110,12 @@ const Login = () => {
                     value={info.email}
                     placeholder="Enter your email"
                     onChange={(event) => setInfo({ ...info, email: event.target.value })}
-                    className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-300"
+                    className={` ${darkMode ? "dark-font dark-bg-gray" : "light-font light-bg-white"} border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring `}
                 />
             </div>
 
             <div className="flex flex-col gap-2">
-                <label htmlFor="password" className="text-sm font-medium">
+                <label htmlFor="password" className={` ${darkMode ? "dark-font" : "light-font"} text-sm font-medium`}>
                     Password
                 </label>
                 <div className="relative">
@@ -123,12 +125,12 @@ const Login = () => {
                         value={info.password}
                         placeholder="Enter Password"
                         onChange={(event) => setInfo({ ...info, password: event.target.value })}
-                        className="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring focus:ring-blue-300"
+                        className={`border ${darkMode ? "dark-font dark-bg-gray" : "light-font light-bg-white"} border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring `}
                     />
                     <button
                         type="button"
                         onClick={handelClickPass}
-                        className="absolute inset-y-0 right-2 text-sm text-blue-500 hover:underline focus:outline-none"
+                        className={`absolute right-2 top-2 text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}
                     >
                         {showPass ? "Hide" : "Show"}
                     </button>

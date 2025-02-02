@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { useToast } from "@/hooks/use-toast"
 import axios from 'axios';
+import { ChatState } from '../../Context/ChatProvider'
+import '../../App.css'
+
 
 const Signup = () => {
 
@@ -16,6 +19,8 @@ const Signup = () => {
     const [loading, setLoading] = useState(false);
     const [isOtpReceived, setIsOtpReceived] = useState(false);
     const { toast } = useToast();
+
+    const { darkMode } = ChatState();
 
 
     const handelClickPass = () => setShowPass(!showPass);
@@ -139,39 +144,39 @@ const Signup = () => {
 
     return (
         //  main container
-        <div className="flex flex-col space-y-4 p-6 w-full max-w-md mx-auto bg-white shadow-md rounded-md">
+        <div className={`flex flex-col space-y-4 p-6 w-full max-w-md mx-auto shadow-md rounded-md ${darkMode ? "dark-bg-black" : "bg-slate-100"}`} >
 
             {/* input filed: name */}
             <div className="flex flex-col">
-                <label htmlFor="name" className="font-medium mb-1">Name</label>
+                <label htmlFor="name" className={`font-medium mb-1 ${darkMode ? "dark-font" : "light-font"}`}>Name</label>
                 <input
                     id="name"
                     type="text"
                     value={info.name}
                     placeholder="Enter your name"
                     onChange={(e) => setInfo((prev) => ({ ...prev, name: e.target.value }))}
-                    className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className={`px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${darkMode ? "dark-bg-gray dark-font" : "light-bg-white light-font"}`}
                     required
                 />
             </div>
 
             {/* input filed: email */}
             <div className="flex flex-col">
-                <label htmlFor="email" className="font-medium mb-1">Email</label>
+                <label htmlFor="email" className={`font-medium mb-1 ${darkMode ? "dark-font" : "light-font"}`}>Email</label>
                 <input
                     id="email"
                     type="email"
                     value={info.email}
                     placeholder="Enter your email"
                     onChange={(e) => setInfo((prev) => ({ ...prev, email: e.target.value }))}
-                    className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className={`px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${darkMode ? "dark-bg-gray dark-font" : "light-bg-white light-font"}`}
                     required
                 />
             </div>
 
             {/* input filed: password */}
             <div className="flex flex-col">
-                <label htmlFor="password" className="font-medium mb-1">Password</label>
+                <label htmlFor="password" className={`font-medium mb-1 ${darkMode ? "dark-font" : "light-font"}`}>Password</label>
                 <div className="relative">
                     <input
                         id="password"
@@ -179,13 +184,13 @@ const Signup = () => {
                         value={info.password}
                         placeholder="Enter your password"
                         onChange={(e) => setInfo((prev) => ({ ...prev, password: e.target.value }))}
-                        className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
-                        required
+                        className={`px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full ${darkMode ? "dark-bg-gray dark-font" : "light-bg-white light-font"}`}
+                        required="true"
                     />
                     <button
                         type="button"
                         onClick={handelClickPass}
-                        className="absolute right-2 top-2 text-sm text-gray-600"
+                        className={`absolute right-2 top-2 text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}
                     >
                         {showPass ? 'Hide' : 'Show'}
                     </button>
@@ -194,7 +199,7 @@ const Signup = () => {
 
             {/* input filed: confirm password */}
             <div className="flex flex-col">
-                <label htmlFor="confirm-password" className="font-medium mb-1">Confirm Password</label>
+                <label htmlFor="confirm-password" className={`font-medium mb-1 ${darkMode ? "dark-font" : "light-font"}`}>Confirm Password</label>
                 <div className="relative">
                     <input
                         id="confirm-password"
@@ -202,13 +207,13 @@ const Signup = () => {
                         value={info.confirmPassword}
                         placeholder="Confirm your password"
                         onChange={(e) => setInfo((prev) => ({ ...prev, confirmPassword: e.target.value }))}
-                        className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
-                        required
+                        className={`px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full ${darkMode ? "dark-bg-gray dark-font" : "light-bg-white light-font"}`}
+                        required="true"
                     />
                     <button
                         type="button"
                         onClick={handelClickConfirmPass}
-                        className="absolute right-2 top-2 text-sm text-gray-600"
+                        className={`absolute right-2 top-2 text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}
                     >
                         {showConfirmPass ? 'Hide' : 'Show'}
                     </button>
@@ -217,12 +222,15 @@ const Signup = () => {
 
             {/* input filed: profile picture */}
             <div className="flex flex-col">
-                <label htmlFor="profilePic" className="font-medium mb-1">Upload your Profile Picture</label>
+                <label htmlFor="profilePic"
+                    className={`font-medium mb-1 ${darkMode ? "dark-font" : "light-font"}`}
+                >Upload your Profile Picture
+                </label>
                 <input
                     id="profilePic"
                     type="file"
                     accept="image/*"
-                    className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className={`px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${darkMode ? "dark-bg-gray text-gray-400 " : "light-bg-white light-font"}`}
                 />
             </div>
 
@@ -240,14 +248,14 @@ const Signup = () => {
 
             {/* input filed: OTP */}
             {isOtpReceived && <div className="flex flex-col">
-                <label htmlFor="otp" className="font-medium mb-1">Enter otp</label>
+                <label htmlFor="otp" className={`font-medium mb-1 ${darkMode ? "dark-font" : "light-font"}`}>Enter otp</label>
                 <input
                     id="otp"
                     type="text"
                     value={info.otp}
                     placeholder="Enter otp from email"
                     onChange={(e) => setInfo((prev) => ({ ...prev, otp: e.target.value }))}
-                    className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className={`px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full ${darkMode ? "dark-bg-gray dark-font" : "light-bg-white light-font"}`}
                     required
                 />
             </div>}

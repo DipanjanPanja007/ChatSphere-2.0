@@ -1,9 +1,79 @@
 /* App.css */
-.bg-app-background {
-    background-image: url('./public/bg_image.jpg'); /* Use relative path if in 'public' */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh; /* Ensure full height */
-  }
+
+/* =====================================*/
+/* Global styles */
+
+.light-font {
+  color: #000;
+}
+.dark-font {
+  color: #ffffff;
+}
+
+.light-bg-white {
+  background-color: #ffffff;
+}
+.dark-bg-black {
+  background-color: #000000;
+}
+.dark-bg-gray {
+  background-color: #3c3c3c;
+}
+
+.bg-blur{
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ===================================== */
+
+/* Home page background */
+/* always style */
+.bg-home {
+  background-image: url('./public/bg_image.jpg'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh; 
+}
+/* light mode */
+
   
+/* dark mode */
+
+
+
+
+
+
+
+
+
+
+
+/* always style */
+.bg-myChats-background {
+  background-color: rgba(227, 254, 94, 0.707);
+  background-image: url('./public/bg_allchats.png'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;  
+}
+/* light mode */
+
+  
+/* dark mode */
+
+
+/* always style */
+.bg-chatBox-background {
+  background-color: rgba(142, 209, 60, 0.707);
+  background-image: url('./public/bg_chat.png');
+  background-size: cover;
+  background-position: bottom;
+  background-repeat: no-repeat;  
+}
+/* light mode */
+
+  
+/* dark mode */

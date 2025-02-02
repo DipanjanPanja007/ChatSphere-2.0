@@ -10,6 +10,8 @@ import { Input } from '../ui/input';
 import axios from 'axios';
 import send_btn from '../../public/send_btn.png';
 
+import '../../App.css';
+
 const ENDPOINT = import.meta.env.VITE_BACKEND_URI;
 let socket, selectedChatCompare;
 
@@ -248,14 +250,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     </div>
 
                     {/* Main Chat Container */}
-                    <div className="flex flex-col justify-between w-full h-[91%] rounded-lg p-3 bg-gray-100">
+                    <div className="flex flex-col justify-between w-full h-[91%] rounded-lg p-3 bg-chatBox-background">
                         {/* Chat Messages Container */}
                         <div className="flex mb-3 overflow-y-auto">
                             {loading ? <>Loading Chats...</> : <ScrollableChat messages={messages} />}
                         </div>
 
                         {/* Input Field */}
-                        <form onKeyDown={sendMessageByEnter} className="bg-slate-100 rounded-sm flex">
+                        <form onKeyDown={sendMessageByEnter} className="rounded-sm flex">
                             {isTyping ? <div>Typing...</div> : null}
                             <Input
                                 variant={'filled'}
