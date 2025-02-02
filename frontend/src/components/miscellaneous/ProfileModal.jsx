@@ -7,16 +7,19 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { ChatState } from "../../Context/ChatProvider"
+import '../../App.css'
 
 
 const ProfileModal = ({ user, children }) => {
+    const { darkMode } = ChatState()
 
 
     return (
         <div>
 
             <Dialog>
-                <DialogTrigger className='px-2 py-1 rounded-md hover:bg-slate-200'>
+                <DialogTrigger className=' w-full rounded-md'>
                     {
                         children ?
                             (<span >{children}</span>)
@@ -24,14 +27,15 @@ const ProfileModal = ({ user, children }) => {
                             (<i class="fa-regular fa-eye"></i>)
                     }
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent
+                    className={`${darkMode ? "dark-bg-black dark-font" : "light-bg-gray light-font"}`}>
                     <DialogHeader>
                         <DialogTitle className="text-center text-4xl" >{user.name}</DialogTitle>
                         <DialogDescription>
                             <img src={user.profilePic}
                                 className='w-60 h-60 rounded-full mx-auto object-cover my-7'
                             />
-                            <h2 className='text-center text-black text-xl mb-2'>{user.email}</h2>
+                            <h2 className={`text-center text-xl mb-2 ${darkMode ? "dark-font" : "light-font"}`}>{user.email}</h2>
                         </DialogDescription>
                     </DialogHeader>
                 </DialogContent>

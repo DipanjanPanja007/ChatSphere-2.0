@@ -12,7 +12,7 @@ import '../../App.css';
 
 
 const MyChats = ({ fetchAgain }) => {
-    const { selectedChat, setSelectedChat, chats, setChats, user } = ChatState();
+    const { selectedChat, setSelectedChat, chats, setChats, user, darkMode } = ChatState();
 
     const [toastMessage, setToastMessage] = useState("");
 
@@ -42,13 +42,13 @@ const MyChats = ({ fetchAgain }) => {
     return (
         <div
             className={`${selectedChat ? "hidden md:flex" : "flex"}
-             flex-col items-center p-3 bg-white w-full md:w-[31%] h-full rounded-lg border border-gray-300`}
+             flex-col items-center p-3 ${darkMode ? "dark-bg-black" : "light-bg-white"} w-full md:w-[31%] h-full rounded-lg border border-gray-300`}
         >
             {/* Header */}
             <div className={`flex items-center justify-between w-full pb-3 px-1 text-[33px] md:text-[17px] lg:text-[20px] font-medium`} >
                 <span>My Chats</span>
                 <GroupChatModal>
-                    <Button className="flex items-center text-[17px] md:text-[10px] lg:text-[17px] font-medium px-5 py-1 rounded-lg text-black bg-gray-200 hover:bg-teal-600 hover:text-white">
+                    <Button className={`flex items-center text-[17px] md:text-[10px] lg:text-[17px] font-medium px-5 py-1 rounded-lg text-black ${darkMode ? "dark-bg-gray dark-font" : "light-bg-gray "} hover:bg-teal-600 hover:text-white`} >
                         New Group Chat <i className="fa-solid fa-plus ml-2"></i>
                     </Button>
                 </GroupChatModal>
@@ -65,7 +65,7 @@ const MyChats = ({ fetchAgain }) => {
                                     onClick={() => setSelectedChat(chat)}
                                     className={`cursor-pointer px-3 py-2 rounded-lg ${selectedChat === chat
                                         ? "bg-teal-500 text-white"
-                                        : "bg-gray-200 text-black"
+                                        : `${darkMode ? "dark-bg-black dark-font" : "light-bg-gray light-font"}`
                                         }`}
                                 >
                                     <span>

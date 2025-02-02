@@ -22,7 +22,7 @@ import Loading from './Loading'
 const GroupCharModal = ({ children }) => {
 
 
-    const { user, chats, setChats, setSelectedChat } = ChatState()
+    const { user, chats, setChats, setSelectedChat, darkMode } = ChatState()
     const [search, setSearch] = useState("")
     const [groupChatName, setGroupChatName] = useState();
     const [selectedUsers, setSelectedUsers] = useState([]);
@@ -152,18 +152,19 @@ const GroupCharModal = ({ children }) => {
         <div>
             <Dialog className="h-auto" onOpenChange={(isOpen) => !isOpen && handleClose()} >
                 <DialogTrigger>{children}</DialogTrigger>
-                <DialogContent>
+                <DialogContent className={`${darkMode ? "dark-bg-black dark-font" : "light-bg-gray light-font"}`}>
                     <DialogHeader>
                         <DialogTitle className="text-center mb-4" >Create Group Chat</DialogTitle>
                         <DialogDescription className="text-black text-md">
                             <Input
                                 placeholder="Chat name"
-                                className="p-2 my-4"
+                                className={`p-2 my-4 ${darkMode ? "dark-bg-gray dark-font" : "light-bg-white light-font"}`}
                                 value={groupChatName}
                                 onChange={(e) => setGroupChatName(e.target.value)} />
 
                             <Input
                                 placeholder="Add Users..."
+                                className={`p-2 my-4 ${darkMode ? "dark-bg-gray dark-font" : "light-bg-white light-font"}`}
                                 value={search}
                                 onChange={(e) => handelSearch(e.target.value)} />
 

@@ -18,7 +18,7 @@ let socket, selectedChatCompare;
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     const inputRef = useRef(null);
     const { toast } = useToast();
-    const { user, selectedChat, setSelectedChat, notification, setNotification } = ChatState();
+    const { user, selectedChat, setSelectedChat, notification, setNotification, darkMode } = ChatState();
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [newMessage, setNewMessage] = useState('');
@@ -118,7 +118,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         return () => {
             socket.off("message_recieved", messageListener);
         };
-    }, [selectedChat, notification, fetchAgain, messages, newMessage]);
+    }, [selectedChat, notification, fetchAgain, messages, newMessage, darkMode]);
 
     // Handle typing logic
     const typingHandler = (e) => {
@@ -261,7 +261,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             {isTyping ? <div>Typing...</div> : null}
                             <Input
                                 variant={'filled'}
-                                className="bg-white p-2"
+                                className={`${darkMode ? "dark-bg-black dark-font" : "light-bg-white light-font"} p-2 border-none`}
                                 placeholder="Type a message..."
                                 onChange={typingHandler}
                                 value={newMessage}

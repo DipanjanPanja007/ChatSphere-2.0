@@ -27,7 +27,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
     const { toast } = useToast();
 
 
-    const { selectedChat, setSelectedChat, user } = ChatState();
+    const { selectedChat, setSelectedChat, user, darkMode } = ChatState();
 
 
 
@@ -208,8 +208,8 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
     return (
         <div>
             <Dialog>
-                <DialogTrigger className='hover:bg-slate-200 px-2 py-1 rounded-md'><i class="fa-regular fa-eye "></i></DialogTrigger>
-                <DialogContent>
+                <DialogTrigger className='hover:bg-slate-500 px-2 py-1 rounded-md'><i class="fa-regular fa-eye "></i></DialogTrigger>
+                <DialogContent className={`${darkMode ? "dark-bg-black dark-font" : "light-bg-gray light-font"}`}>
                     <DialogHeader>
                         <DialogTitle
                             className='text-center font-bold text-3xl'
@@ -217,7 +217,8 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                         </DialogTitle>
                         <DialogDescription>
                             {
-                                selectedChat.isGroupChat ? (<h3 className='text-xl'>Group admin is: {selectedChat.groupAdmin.name}</h3>) : (<></>)
+                                selectedChat.isGroupChat ?
+                                    (<h3 className={`text=xl ${darkMode ? "dark-font" : "light-font"} `}>Group admin is: {selectedChat.groupAdmin.name}</h3>) : (<></>)
                             }
 
                             <div className='flex wrap w-full pb-2 my-4 justify-between'>
@@ -231,7 +232,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                             <form className='flex mb-1'>
                                 <Input
                                     placeholder='Chat Name'
-                                    className='mb-3'
+                                    className={`mb-3 ${darkMode ? "dark-bg-gray dark-font" : "light-bg-gray light-font"}`}
                                     value={groupChatName}
                                     onChange={(e) => (setGroupChatName(e.target.value))}
                                 />
@@ -244,7 +245,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                             <form className=''>
                                 <Input
                                     placeholder='Add User into Group'
-                                    className='mb-3'
+                                    className={`mb-3 ${darkMode ? "dark-bg-gray dark-font" : "light-bg-gray light-font"}`}
                                     onChange={(e) => handleSearch(e.target.value)}
                                 />
                             </form>

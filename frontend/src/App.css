@@ -13,11 +13,19 @@
 .light-bg-white {
   background-color: #ffffff;
 }
+.light-bg-gray {
+  background-color: rgba(229 231 235);
+}
+
 .dark-bg-black {
   background-color: #000000;
 }
 .dark-bg-gray {
   background-color: #3c3c3c;
+}
+
+.selected-green{
+  background-color: "bg-teal-500";
 }
 
 .bg-blur{

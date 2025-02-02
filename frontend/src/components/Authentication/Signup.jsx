@@ -144,7 +144,7 @@ const Signup = () => {
 
     return (
         //  main container
-        <div className={`flex flex-col space-y-4 p-6 w-full max-w-md mx-auto shadow-md rounded-md ${darkMode ? "dark-bg-black" : "bg-slate-100"}`} >
+        <div className={`flex flex-col space-y-4 p-6 w-full max-w-md mx-auto shadow-md rounded-md ${darkMode ? "dark-bg-black" : "light-bg-gray"}`} >
 
             {/* input filed: name */}
             <div className="flex flex-col">

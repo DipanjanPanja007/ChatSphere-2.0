@@ -47,7 +47,7 @@ const ScrollableChat = ({ messages }) => {
                             {/* Message bubble */}
                             <span
                                 className={`rounded-[1.5rem] px-4 py-2 max-w-[75%] 
-                                ${currMessage.sender._id === user.data.user._id ? "bg-[#BFA7FA]" : "bg-[#F0B99E]"}`}
+                                ${currMessage.sender._id === user.data.user._id ? "bg-[#BFA7FA]" : "bg-[#F0B99E]"} text-black`}
                                 style={{
                                     wordBreak: "break-word", // Ensures text breaks within words
                                     overflowWrap: "break-word", // Wraps long words properly

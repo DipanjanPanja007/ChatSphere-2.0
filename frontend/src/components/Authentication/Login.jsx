@@ -99,7 +99,7 @@ const Login = () => {
     };
 
     return (
-        <div className={`flex flex-col gap-4 p-6 max-w-md mx-auto ${darkMode ? "dark-bg-black" : "bg-slate-100"}  rounded-md shadow-md `}>
+        <div className={`flex flex-col gap-4 p-6 max-w-md mx-auto ${darkMode ? "dark-bg-black" : "light-bg-gray"}  rounded-md shadow-md `}>
             <div className="flex flex-col gap-2">
                 <label htmlFor="email" className={` ${darkMode ? "dark-font" : "light-font"} text-sm font-medium`}>
                     Email

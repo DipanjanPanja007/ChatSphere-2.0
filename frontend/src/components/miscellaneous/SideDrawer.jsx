@@ -20,7 +20,7 @@ const SideDrawer = () => {
     const [loadingChat, setLoadingChat] = useState(false);
     const [isDrawerOpen, setDrawerOpen] = useState(false);
 
-    const { user, setUser, setSelectedChat, chats, setChats, notification, setNotification } = ChatState();
+    const { user, setUser, setSelectedChat, chats, setChats, notification, setNotification, darkMode } = ChatState();
     const navigate = useNavigate();
     const { toast } = useToast();
 
@@ -101,14 +101,18 @@ const SideDrawer = () => {
     return (
         <>
             {/* Top Bar */}
-            <div className="flex justify-between items-center bg-white w-full px-4 py-3 border border-gray-200 h-[9vh]">
+            <div className={`flex justify-between items-center ${darkMode ? "dark-bg-black dark-font border-gray-600" : "light-bg-white border-gray-200"} w-full px-4 py-3 border  h-[9vh]`}>
 
                 {/* left tooltip for search user */}
                 <TooltipProvider>
                     <Tooltip>
-                        <TooltipTrigger onClick={openDrawer} className="cursor-pointer flex items-center space-x-2 bg-slate-200 px-4 py-2 rounded-md">
+                        <TooltipTrigger
+                            onClick={openDrawer}
+                            className={`cursor-pointer flex items-center space-x-2 ${darkMode ? "dark-bg-gray" : "light-bg-gray"} px-4 py-2 rounded-md`} >
                             <i className="fa-solid fa-magnifying-glass text-lg"></i>
-                            <span className="hidden md:inline-block">Search User</span>
+                            <span className="hidden md:inline-block">
+                                Search User
+                            </span>
                         </TooltipTrigger>
                         <TooltipContent>
                             <p>Click to open the search bar</p>
@@ -134,7 +138,7 @@ const SideDrawer = () => {
                             }
                         </DropdownMenuTrigger>
 
-                        <DropdownMenuContent className="px-3 py-1.5" >
+                        <DropdownMenuContent className={`px-3 py-1.5 ${darkMode ? "dark-bg-black dark-font" : "light-bg-white light-font"}`} >
                             {
                                 !notification.length && "No New Messages"
                             }
@@ -142,7 +146,7 @@ const SideDrawer = () => {
                                 notification.map((noti) => (
                                     <DropdownMenuLabel
                                         key={noti._id}
-                                        className="px-3 py-1.5 cursor-pointer"
+                                        className={`px-3 py-1.5 cursor-pointer ${darkMode ? "dark-bg-black dark-font" : "light-bg-white light-font"}`}
                                         onClick={() => {
                                             setSelectedChat(noti.chat);
                                             setNotification(notification.filter((n) => n !== noti));
@@ -163,20 +167,29 @@ const SideDrawer = () => {
 
                     {/* for userinfo */}
                     <DropdownMenu>
-                        <DropdownMenuTrigger className="flex items-center space-x-2 outline-none bg-slate-200 px-4 py-2 hover:bg-slate-300 rounded-md">
+                        <DropdownMenuTrigger
+                            className={`flex items-center space-x-2 outline-none ${darkMode ? "dark-bg-gray dark-font hover:bg-slate-500" : "light-bg-gray light-font hover:bg-slate-300"} px-4 py-2 rounded-md`} >
                             <Avatar className="w-8 h-8">
                                 <AvatarImage src={user.data.user.profilePic} className="rounded-full mx-auto object-cover" />
                                 <AvatarFallback>User</AvatarFallback>
                             </Avatar>
-                            <i className="fa-solid fa-angle-down text-slate-800" />
+                            <i className={`fa-solid fa-angle-down ${darkMode ? "dark-font" : "light-font"}`} />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="px-3 py-1.5">
-                            <ProfileModal user={user.data.user}>
-                                <DropdownMenuLabel>My Profile</DropdownMenuLabel>
+                        <DropdownMenuContent className={`justify-center ${darkMode ? "dark-bg-gray dark-font" : "light-bg-gray light-font"} `} >
+                            <ProfileModal user={user.data.user}
+                                className='flex justify-center items-center p-0'>
+                                <DropdownMenuLabel
+                                    className={`px-6 py-3 rounded-sm cursor-pointer text-center ${darkMode ? "hover:bg-slate-500" : "hover:bg-slate-300"} `}
+                                >My Profile
+                                </DropdownMenuLabel>
                             </ProfileModal>
 
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={logoutHandler}>Logout<i class="fa-solid fa-right-from-bracket" /></DropdownMenuItem>
+                            <DropdownMenuItem
+                                className={`px-6 py-3 cursor-pointer flex justify-center items-center font-medium ${darkMode ? "hover:bg-slate-500" : "hover:bg-slate-300"}`}
+                                onClick={logoutHandler}>Logout
+                                <i class="fa-solid fa-right-from-bracket" />
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
 
@@ -188,12 +201,12 @@ const SideDrawer = () => {
 
             {/* Full-Screen Left Drawer */}
             <div
-                className={`fixed top-0 left-0 h-full w-full bg-black bg-opacity-40 z-50 transition-opacity duration-300 ${isDrawerOpen ? "opacity-100 visible" : "opacity-0 invisible"
+                className={`fixed top-0 left-0 h-full w-full bg-opacity-40 z-50 transition-opacity duration-300 ${isDrawerOpen ? "opacity-100 visible" : "opacity-0 invisible"
                     }`}
                 onClick={closeDrawer}
             >
                 <div
-                    className={`fixed top-0 left-0 h-full w-80 bg-white shadow-lg z-50 transform transition-transform duration-300 ${isDrawerOpen ? "translate-x-0" : "-translate-x-full"
+                    className={`fixed top-0 left-0 h-full w-80 ${darkMode ? "dark-bg-black dark-font" : "light-bg-gray light-font"} shadow-lg z-50 transform transition-transform duration-300 ${isDrawerOpen ? "translate-x-0" : "-translate-x-full"
                         }`}
                     onClick={(e) => e.stopPropagation()} // Prevent close on clicking inside drawer
                 >
@@ -208,7 +221,7 @@ const SideDrawer = () => {
                             placeholder="Search by name or email"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded mb-4"
+                            className={`${darkMode ? "dark-bg-gray dark-font" : "light-bg-white light-font"} w-full p-2 border border-gray-300 rounded mb-4`}
                         />
                         <button
                             onClick={handleSearch}
