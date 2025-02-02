@@ -21,7 +21,7 @@ const HomePage = () => {
 
 
     return (
-        <div className="flex flex-col items-center pt-10 h-screen max-w-[600px] w-[90%] mx-auto  ">
+        <div className="flex flex-col items-center pt-10 h-auto max-w-[600px] w-[90%] mx-auto  ">
             <div className={`bg-blur bg-opacity-20 border border-gray-400 rounded-lg p-4 w-full`}>
                 <h1 className="text-3xl font-bold font-lato italic text-white text-center">ChatSphere</h1>
             </div>
