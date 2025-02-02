@@ -101,7 +101,7 @@ const SideDrawer = () => {
     return (
         <>
             {/* Top Bar */}
-            <div className="flex justify-between items-center bg-white w-full px-4 py-3 border border-gray-200">
+            <div className="flex justify-between items-center bg-white w-full px-4 py-3 border border-gray-200 h-[9vh]">
 
                 {/* left tooltip for search user */}
                 <TooltipProvider>
