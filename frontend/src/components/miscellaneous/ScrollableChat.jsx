@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import { Avatar, AvatarImage } from '../ui/avatar'
 import { isSameUser, setSenderMargin } from '@/config/ChatLogic'
 import { ChatState } from '@/Context/ChatProvider'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip"
