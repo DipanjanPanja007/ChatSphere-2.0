@@ -208,7 +208,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
     return (
         <div>
             <Dialog>
-                <DialogTrigger className='hover:bg-slate-500 px-2 py-1 rounded-md'><i class="fa-regular fa-eye "></i></DialogTrigger>
+                <DialogTrigger className=' rounded-md'><i class="fa-regular fa-eye "></i></DialogTrigger>
                 <DialogContent className={`${darkMode ? "dark-bg-black dark-font" : "light-bg-gray light-font"}`}>
                     <DialogHeader>
                         <DialogTitle

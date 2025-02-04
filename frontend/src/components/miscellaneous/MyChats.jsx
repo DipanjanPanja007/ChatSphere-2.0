@@ -55,7 +55,7 @@ const MyChats = ({ fetchAgain }) => {
             </div>
 
             {/* Chat List */}
-            <ScrollArea className="flex flex-col p-3 bg-myChats-background w-full h-full rounded-lg overflow-y-auto">
+            <div className={`flex flex-col px-0 py-3 w-full h-full bg-myChats-pic ${darkMode ? "bg-myChats-dark" : "bg-myChats-light"}  rounded-lg overflow-y-auto`}>
                 <div className="flex flex-col p-3  w-full h-full rounded-lg overflow-y-auto">
                     {chats ? (
                         <div className="flex flex-col space-y-2">
@@ -65,7 +65,7 @@ const MyChats = ({ fetchAgain }) => {
                                     onClick={() => setSelectedChat(chat)}
                                     className={`cursor-pointer px-3 py-2 rounded-lg ${selectedChat === chat
                                         ? "bg-teal-500 text-white"
-                                        : `${darkMode ? "dark-bg-black dark-font" : "light-bg-gray light-font"}`
+                                        : `${darkMode ? "dark-bg-black dark-font" : "light-bg-white light-font"}`
                                         }`}
                                 >
                                     <span>
@@ -87,7 +87,7 @@ const MyChats = ({ fetchAgain }) => {
                         {toastMessage}
                     </div>
                 )}
-            </ScrollArea>
+            </div>
         </div>
     );
 };

@@ -10,6 +10,7 @@ import Loading from "./Loading";
 import { useToast } from "@/hooks/use-toast";
 import UserListItem from "./UserListItem";
 import { getSender } from "@/config/ChatLogic";
+import { Button } from "../ui/button";
 
 
 
@@ -20,7 +21,7 @@ const SideDrawer = () => {
     const [loadingChat, setLoadingChat] = useState(false);
     const [isDrawerOpen, setDrawerOpen] = useState(false);
 
-    const { user, setUser, setSelectedChat, chats, setChats, notification, setNotification, darkMode } = ChatState();
+    const { user, setUser, setSelectedChat, chats, setChats, notification, setNotification, darkMode, setDarkMode } = ChatState();
     const navigate = useNavigate();
     const { toast } = useToast();
 
@@ -165,6 +166,22 @@ const SideDrawer = () => {
                         </DropdownMenuContent>
                     </DropdownMenu>
 
+
+                    {/* Dark-Light Mode Toggle switch */}
+                    <div
+                        className="flex items-center mr-4"
+                    >
+                        <button
+                            className={`flex`}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setDarkMode(!darkMode);
+                            }}
+                        >
+                            <img src={darkMode ? "src/public/lightMode_img.png" : "src/public/darkMode_img.png"} className="w-8 h-8 rounded-full" alt="Dark Mode" />
+                        </button>
+                    </div>
+
                     {/* for userinfo */}
                     <DropdownMenu>
                         <DropdownMenuTrigger
@@ -179,7 +196,7 @@ const SideDrawer = () => {
                             <ProfileModal user={user.data.user}
                                 className='flex justify-center items-center p-0'>
                                 <DropdownMenuLabel
-                                    className={`px-6 py-3 rounded-sm cursor-pointer text-center ${darkMode ? "hover:bg-slate-500" : "hover:bg-slate-300"} `}
+                                    className={`px-6 py-3 rounded-sm cursor-pointer text-center ${darkMode ? "hover:bg-slate-300 hover:text-black" : "hover:bg-slate-300"} `}
                                 >My Profile
                                 </DropdownMenuLabel>
                             </ProfileModal>

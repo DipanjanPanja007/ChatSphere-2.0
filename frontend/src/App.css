@@ -35,6 +35,7 @@
 
 /* ===================================== */
 
+/* ------------------------------------------------------------ */
 /* Home page background */
 /* always style */
 .bg-home {
@@ -49,39 +50,44 @@
   
 /* dark mode */
 
+/* ------------------------------------------------------------ */
 
-
-
-
-
-
-
-
-
-
+/* chatList background */
 /* always style */
-.bg-myChats-background {
-  background-color: rgba(227, 254, 94, 0.707);
+.bg-myChats-pic { 
+  /* background-color: rgb(255 252 174) ; */
   background-image: url('./public/bg_allchats.png'); 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;  
 }
 /* light mode */
-
-  
+.bg-myChats-light {
+  background-color: rgb(255 252 174);
+}  
 /* dark mode */
+.bg-myChats-dark {
+  background-color: rgb(28 51 0);
+}
 
 
+
+/* ------------------------------------------------------------ */
+/* chatBox background */
 /* always style */
-.bg-chatBox-background {
-  background-color: rgba(59, 107, 0, 0.707);
+.bg-chatBox-pic {
   background-image: url('./public/bg_chat.png');
   background-size: cover;
   background-position: bottom;
   background-repeat: no-repeat;  
 }
 /* light mode */
-
+.bg-chatBox-bg-light {
+  background-color: rgb(235 255 188);
+}
   
 /* dark mode */
+.bg-chatBox-bg-dark {
+  background-color: rgb(28 51 0);
+}
+/* ------------------------------------------------------------ */

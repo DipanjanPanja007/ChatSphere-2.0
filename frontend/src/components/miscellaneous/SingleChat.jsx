@@ -227,7 +227,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     {/* Chat Header */}
                     <div className="text-[24px] max-md:text-[28px] w-full mb-2 px-2 font-sans flex items-center justify-between align-middle">
                         <button
-                            className="flex md:hidden py-2 px-3 bg-slate-300 hover:bg-slate-400 rounded-md"
+                            className={`flex md:hidden py-2 px-3 ${darkMode ? "light-bg-gray light-font " : "light-bg-gray light-font"} bg-slate-300 hover:bg-slate-400  rounded-md`}
                             onClick={() => setSelectedChat('')}
                         >
                             <i className="fa-solid fa-arrow-left"></i>
@@ -239,7 +239,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             </>
                         ) : (
                             <>
-                                {selectedChat.chatName.toUpperCase()}
+                                {selectedChat.chatName}
                                 <UpdateGroupChatModal
                                     fetchAgain={fetchAgain}
                                     setFetchAgain={setFetchAgain}
@@ -250,7 +250,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     </div>
 
                     {/* Main Chat Container */}
-                    <div className="flex flex-col justify-between w-full h-[91%] rounded-lg p-3 bg-chatBox-background">
+                    <div className={`flex flex-col justify-between w-full h-[91%] rounded-lg p-3 bg-chatBox-pic ${darkMode ? "bg-chatBox-bg-dark" : "bg-chatBox-bg-light"}`}>
                         {/* Chat Messages Container */}
                         <div className="flex mb-3 overflow-y-auto">
                             {loading ? <>Loading Chats...</> : <ScrollableChat messages={messages} />}
