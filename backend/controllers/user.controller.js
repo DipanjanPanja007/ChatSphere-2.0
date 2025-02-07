@@ -3,7 +3,7 @@ import { MemoryOtp } from "../models/memoryOtp.model.js"
 import asyncHandler from "express-async-handler";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { sendMail } from "../config/sendMail.js";
 
 
@@ -105,7 +105,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password, otp } = req.body;          // remove pic as we will send it through middleware
     // console.log(`name: ${name}, email: ${email}, password: ${password}, otp: ${otp}`);
 
-    // step#2: if any one not found, throw error: validation - not empty
+    // if any one not found, throw error: validation - not empty
     if ([name, email, password, otp].some((field) => field?.trim() === "")) {
         throw new ApiError(400, "All fields are required...");
     }
@@ -113,7 +113,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 
 
-    // step#3: check if OTP is correct or not
+    // step#2: check if OTP is correct or not
     const otpExists = await MemoryOtp.findOne({ email });
 
     if (!otpExists) {                // if otp expired or not exists
@@ -133,7 +133,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
 
-    // step#4: check for profilePicture given or not... ( from middleware )
+    // step3#: check for profilePicture given or not... ( from middleware )
 
     // console.log("req.file: ", req.file);
     let profilePicPath = "";
@@ -148,7 +148,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
 
-    // step#5: create User object and send it after removing credentials
+    // step#4: create User object and send it after removing credentials
     const user = await User.create({
         name: name,
         email: email,
@@ -164,7 +164,7 @@ const registerUser = asyncHandler(async (req, res) => {
         "-password -refreshToken"
     )
 
-    // Step#6: check for user creation
+    // Step#5: check for user creation
     if (!createdUser) {
         throw new ApiError(500, "Something is wrong while registering you...");
     }
@@ -284,6 +284,59 @@ const allUsers = asyncHandler(async (req, res) => {
             "data": { users },
             "message": "users found successfully"
         })
-})
+});
 
-export { reqOTP, registerUser, loginUser, allUsers }
+const updateProfilePic = asyncHandler(async (req, res) => {
+    /*
+     * step#1: check for profilePicture given or not... ( from middleware )
+     * step#2: upload new profile pic on cloudinary
+     * step#3: delete old profile pic from cloudinary
+     * step#4: update profilePic in User collection
+     */
+
+    // step#1: check for profilePicture given or not... ( from middleware )
+    console.log("req.file: ", req.file);
+    let profilePicPath = "";
+    if (req.file) {
+        profilePicPath = req.file.path;
+    } else {
+        throw new ApiError(400, "Profile pic not given")
+    }
+
+    // step#2: upload new profile pic on cloudinary
+    let profilePic = ""
+    if (profilePicPath) {
+        profilePic = await uploadOnCloudinary(profilePicPath, req.file.filename);
+    }
+    if (!profilePic || !profilePic.url) {
+        throw new ApiError(500, "Something went wrong while updating profile pic");
+    }
+
+    // step#3: delete old profile pic from cloudinary
+    const prevPicture = req.user.profilePic;
+    if (prevPicture) {
+        const deletePreviousPic = await deleteFromCloudinary(prevPicture);
+        console.log("deletePreviousPic: ", deletePreviousPic);
+        if (!deletePreviousPic) {
+            console.log("previous pic cannot be deleted successfully");
+        }
+        else {
+            console.log("previous pic deleted successfully");
+        }
+    }
+
+    // step#4: update profilePic in User collection
+    const user = await User.findByIdAndUpdate(req.user._id, { profilePic: profilePic.url }, { new: true }).select("-password -refreshToken");
+
+    if (!user) {
+        throw new ApiError(500, "Something went wrong while updating profile pic");
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, user, "Profile pic updated successfully")
+        )
+});
+
+export { reqOTP, registerUser, loginUser, allUsers, updateProfilePic }

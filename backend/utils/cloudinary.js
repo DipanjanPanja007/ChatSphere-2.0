@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs"
-import "dotenv/config"               // what a golmal
+import "dotenv/config"
 
 // Configuration of cloudinary
 
@@ -38,7 +38,21 @@ const uploadOnCloudinary = async (localFilePath, picName) => {
     } finally {
         fs.unlinkSync(localFilePath)
     }
-}
+};
 
 
-export { uploadOnCloudinary }
+const deleteFromCloudinary = async (imageUrl) => {
+
+    const urlArray = imageUrl.split("/");
+    const fileName = urlArray[urlArray.length - 1];
+    const imageName = fileName.split(".")[0] + "." + fileName.split(".")[1];
+    console.log("imageName", imageName);
+
+
+    cloudinary.uploader.destroy(imageName, (error, result) => {
+        console.log(error, result);
+    })
+
+};
+
+export { uploadOnCloudinary, deleteFromCloudinary }

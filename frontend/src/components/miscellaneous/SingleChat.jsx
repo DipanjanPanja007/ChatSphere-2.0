@@ -271,9 +271,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             <button
                                 type="submit"
                                 onClick={sendMessageByButton}
-                                className="rounded-full ml-2 bg-white "
+                                className={`rounded-full ml-2 ${darkMode ? "dark-bg-black" : "light-bg-white"} `}
                             >
-                                <img src={send_btn} className="w-10 h-9 rounded-full" alt="Send Button" />
+                                <img src={send_btn} className="w-10 h-9 rounded-full opacity-90 hover:opacity-100" alt="Send Button" />
                             </button>
 
                         </form>
