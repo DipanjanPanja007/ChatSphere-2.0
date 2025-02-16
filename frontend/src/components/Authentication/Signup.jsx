@@ -3,6 +3,8 @@ import { useToast } from "@/hooks/use-toast"
 import axios from 'axios';
 import { ChatState } from '../../Context/ChatProvider'
 import '../../App.css'
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 
 
 const Signup = () => {
@@ -271,6 +273,18 @@ const Signup = () => {
             >
                 {loading ? 'Loading...' : 'Submit'}
             </button>}
+
+            {/* Google login */}
+            {/* <GoogleLogin
+                onSuccess={credentialResponse => {
+                    const credentialResponseDecoded = jwtDecode(credentialResponse.credential);
+                    console.log('credentialResponseDecoded', credentialResponseDecoded);
+                }}
+                onError={() => {
+                    console.log('Login Failed');
+                }}
+            /> */}
+
         </div>
     )
 }

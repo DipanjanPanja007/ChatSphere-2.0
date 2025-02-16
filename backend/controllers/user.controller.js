@@ -177,6 +177,10 @@ const registerUser = asyncHandler(async (req, res) => {
         )
 });
 
+const registerByGoogle = asyncHandler(async (req, res) => {
+
+});
+
 const loginUser = asyncHandler(async (req, res) => {
 
     /*
@@ -244,6 +248,10 @@ const loginUser = asyncHandler(async (req, res) => {
                 "User logged In Successfully"
             )
         )
+
+});
+
+const loginByGoogle = asyncHandler(async (req, res) => {
 
 });
 
@@ -339,4 +347,25 @@ const updateProfilePic = asyncHandler(async (req, res) => {
         )
 });
 
-export { reqOTP, registerUser, loginUser, allUsers, updateProfilePic }
+const deleteProfilePic = asyncHandler(async (req, res) => {
+    const prevPicture = req.user.profilePic;
+    if (prevPicture) {
+        const deletePreviousPic = await deleteFromCloudinary(prevPicture);
+        console.log("deletePreviousPic: ", deletePreviousPic);
+        if (!deletePreviousPic) {
+            console.log("previous pic cannot be deleted successfully");
+        }
+        else {
+            console.log("previous pic deleted successfully");
+        }
+    }
+    const user = await User.findByIdAndUpdate(req.user._id, { profilePic: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" }, { new: true }).select("-password -refreshToken");
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, user, "Profile pic deleted successfully")
+        )
+});
+
+export { reqOTP, registerUser, loginUser, allUsers, updateProfilePic, deleteProfilePic, registerByGoogle, loginByGoogle }
