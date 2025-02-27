@@ -45,7 +45,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     // Socket setup
     useEffect(() => {
         socket = io(ENDPOINT);
-        socket.emit('setup', user.data.user);
+        socket.emit('setup', user);
         socket.on('connected', () => setSocketConnected(true));
 
         // socket.on("typing", () => setIsTyping(true));
@@ -167,13 +167,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 },
                 {
                     headers: {
-                        Authorization: `Bearer ${user.data.accessToken}`,
+                        Authorization: `Bearer ${user.accessToken}`,
                     },
                 }
             );
+            // console.log(data)
 
-            socket.emit('new_message', data.data);
-            setMessages((prev) => [...prev, data.data]);
+            socket.emit('new_message', data.message);
+            setMessages((prev) => [...prev, data.message]);
         } catch (error) {
             toast({
                 title: 'Error occurred while sending message',
@@ -192,10 +193,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             setLoading(true);
             const { data } = await axios.get(`${ENDPOINT}/api/message/${selectedChat._id}`, {
                 headers: {
-                    Authorization: `Bearer ${user.data.accessToken}`,
+                    Authorization: `Bearer ${user.accessToken}`,
                 },
             });
-            setMessages(data.data);
+            // console.log(data);
+
+            // setMessages(data.messages);
             setLoading(false);
         } catch (error) {
             toast({

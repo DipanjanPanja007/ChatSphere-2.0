@@ -5,7 +5,7 @@ import axios from "axios";
 import { getSender } from "../../config/ChatLogic.js";
 import GroupChatModal from "./GroupChatModal.jsx";
 import Loading from "./Loading";
-import { ScrollArea } from "@/components/ui/scroll-area"
+// import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "../ui/button";
 
 import '../../App.css';
@@ -17,19 +17,21 @@ const MyChats = ({ fetchAgain }) => {
     const [toastMessage, setToastMessage] = useState("");
 
     const fetchChats = async () => {
+        console.log("fetching chats");
         try {
             const { data } = await axios.get(
                 `${import.meta.env.VITE_BACKEND_URI}/api/chat`,
                 {
                     headers: {
-                        Authorization: `Bearer ${user.data.accessToken}`,
+                        Authorization: `Bearer ${user.accessToken}`,
                         "Content-Type": "application/json",
                     },
                     credentials: "include",
                 }
             );
+            console.log("data", data);
 
-            setChats(data.data);
+            setChats(data.result);
         } catch (error) {
             setToastMessage("Failed to Load the chats");
         }

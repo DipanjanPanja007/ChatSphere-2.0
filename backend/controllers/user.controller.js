@@ -2,7 +2,6 @@ import { User } from "../models/user.model.js"
 import { MemoryOtp } from "../models/memoryOtp.model.js"
 import asyncHandler from "express-async-handler";
 import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { sendMail } from "../config/sendMail.js";
 
@@ -88,7 +87,8 @@ const reqOTP = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(
-            new ApiResponse(200, { email }, "OTP sent successfully")
+            { email },
+            "OTP sent successfully"
         )
 });
 
@@ -120,7 +120,8 @@ const registerUser = asyncHandler(async (req, res) => {
         return res
             .status(400)
             .json(
-                new ApiResponse(400, null, "OTP expired Boss...")
+                null,
+                "OTP expired, try again..."
             )
     }
 
@@ -128,7 +129,8 @@ const registerUser = asyncHandler(async (req, res) => {
         return res
             .status(400)
             .json(
-                new ApiResponse(200, null, "Incorrect OTP, try again...")
+                null,
+                "Incorrect OTP, try again..."
             )
     }
 
@@ -173,7 +175,8 @@ const registerUser = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(
-            new ApiResponse(200, createdUser, "User registered Successfully")
+            createdUser,
+            "User registered successfully"
         )
 });
 
@@ -223,7 +226,11 @@ const loginUser = asyncHandler(async (req, res) => {
     //  removing credentials from User object
     const loggedInUser = await User.findById(user._id).select(
         "-password -refreshToken"
-    );
+    ).lean();
+
+    loggedInUser.accessToken = accessToken;
+
+    console.log("loggedInUser: ", loggedInUser);
 
     const options = {
         httpOnly: true, // cookie can be modified by server only
@@ -239,14 +246,7 @@ const loginUser = asyncHandler(async (req, res) => {
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)
         .json(
-            new ApiResponse(
-                200,
-                {
-                    user: loggedInUser,
-                    accessToken,
-                },
-                "User logged In Successfully"
-            )
+            loggedInUser
         )
 
 });
@@ -289,7 +289,7 @@ const allUsers = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json({
-            "data": { users },
+            users,
             "message": "users found successfully"
         })
 });
@@ -343,7 +343,8 @@ const updateProfilePic = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(
-            new ApiResponse(200, user, "Profile pic updated successfully")
+            user,
+            "Profile pic updated successfully"
         )
 });
 
@@ -364,7 +365,8 @@ const deleteProfilePic = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(
-            new ApiResponse(200, user, "Profile pic deleted successfully")
+            user,
+            "Profile pic deleted successfully"
         )
 });
 

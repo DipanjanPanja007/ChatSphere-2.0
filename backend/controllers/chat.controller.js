@@ -2,7 +2,6 @@ import { User } from "../models/user.model.js"
 import { Chat } from "../models/chat.model.js"
 import asyncHandler from "express-async-handler";
 import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
 
 
 
@@ -57,10 +56,7 @@ const accessChat = asyncHandler(async (req, res) => {
             return res
                 .status(201)
                 .json(
-                    new ApiResponse(
-                        200,
-                        FullChat
-                    )
+                    FullChat
                 )
         } catch (error) {
             throw new ApiError(
@@ -90,12 +86,9 @@ const fetchChats = asyncHandler(async (req, res) => {
             .then(async (result) => {
                 return res
                     .status(201)
-                    .json(
-                        new ApiResponse(
-                            201,
-                            result
-                        )
-                    )
+                    .json({
+                        result
+                    })
             })
     } catch (error) {
         throw new ApiError(400, `Error from fetchChats : ${error.message}`)
@@ -141,12 +134,10 @@ const createGroupChat = asyncHandler(async (req, res) => {
         // step#4: return new groupChat
         return res
             .status(201)
-            .json(
-                new ApiResponse(
-                    201,
-                    createdGroupChat
-                )
-            )
+            .json({
+                createdGroupChat,
+                message: "GroupChat created successfully"
+            })
 
     } catch (error) {
         throw new ApiError(400, `Something went wrong while creating GroupChat: ${error.message}`)
@@ -185,12 +176,9 @@ const renameGroup = asyncHandler(async (req, res) => {
 
     res
         .status(201)
-        .json(
-            new ApiResponse(
-                201,
-                updatedChat
-            )
-        )
+        .json({
+            updatedChat
+        })
 });
 
 
@@ -224,10 +212,7 @@ const addToGroup = asyncHandler(async (req, res) => {
     res
         .status(201)
         .json(
-            new ApiResponse(
-                201,
-                addUserUpdatedChat
-            )
+            addUserUpdatedChat
         )
 });
 
@@ -262,10 +247,7 @@ const removeFromGroup = asyncHandler(async (req, res) => {
     res
         .status(201)
         .json(
-            new ApiResponse(
-                201,
-                removeUserUpdatedChat
-            )
+            removeUserUpdatedChat
         )
 
 

@@ -44,6 +44,7 @@ const ProfileModal = ({ user, children }) => {
                     },
                 }
             );
+            console.log("response: ", response);
             if (response.status !== 200) {
                 throw new Error(response.data?.message || "failed to change profile picture");
             }

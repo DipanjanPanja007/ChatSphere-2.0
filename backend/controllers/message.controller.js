@@ -2,7 +2,6 @@ import asyncHandler from "express-async-handler";
 import { Message } from "../models/message.model.js"
 import { User } from "../models/user.model.js"
 import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
 import { Chat } from "../models/chat.model.js";
 
 const sendMessage = asyncHandler(async (req, res) => {
@@ -44,12 +43,9 @@ const sendMessage = asyncHandler(async (req, res) => {
 
         return res
             .status(201)
-            .json(
-                new ApiResponse(
-                    201,
-                    message
-                )
-            )
+            .json({
+                message
+            })
 
     } catch (error) {
         throw new ApiError(400, `Caught an error while sending message: ${error.message}`)
@@ -64,12 +60,9 @@ const allMessages = asyncHandler(async (req, res) => {
 
         return res
             .status(201)
-            .json(
-                new ApiResponse(
-                    201,
-                    messages
-                )
-            )
+            .json({
+                messages
+            })
     } catch (error) {
         throw new ApiError(400, `caught error while fetching all messages for a chat ${error.message}`)
     }

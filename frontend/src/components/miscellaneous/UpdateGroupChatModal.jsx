@@ -41,7 +41,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
             return;
         }
 
-        if (selectedChat.groupAdmin._id !== user.data.user._id) {
+        if (selectedChat.groupAdmin._id !== user._id) {
             toast({
                 title: "Error occoured",
                 description: "Only Admin can add members",
@@ -54,7 +54,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
             setLoading(true)
             const config = {
                 headers: {
-                    Authorization: `Bearer ${user.data.accessToken}`
+                    Authorization: `Bearer ${user.accessToken}`
                 }
             }
 
@@ -65,7 +65,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                 config,
             )
 
-            setSelectedChat(data.data)
+            setSelectedChat(data)
             setFetchAgain(!fetchAgain)
             setLoading(false)
         } catch (error) {
@@ -80,7 +80,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
 
     const handleRemoveUser = async (userToRemove) => {
 
-        if (selectedChat.groupAdmin._id !== user.data.user._id && userToRemove._id !== user.data.user._id) {
+        if (selectedChat.groupAdmin._id !== user._id && userToRemove._id !== user._id) {
             toast({
                 title: "Only Admin can remove members",
                 variant: "error",
@@ -92,7 +92,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
             setLoading(true)
             const config = {
                 headers: {
-                    Authorization: `Bearer ${user.data.accessToken}`
+                    Authorization: `Bearer ${user.accessToken}`
                 }
             }
 
@@ -103,8 +103,8 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                 config,
             )
 
-            userToRemove._id === user.data.user._id ? setSelectedChat() : setSelectedChat(data.data)
-            if (userToRemove._id === user.data.user._id) {
+            userToRemove._id === user._id ? setSelectedChat() : setSelectedChat(data)
+            if (userToRemove._id === user._id) {
                 toast({
                     title: `You left the group`,
                     variant: "success",
@@ -139,7 +139,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
 
             const config = {
                 headers: {
-                    Authorization: `Bearer ${user.data.accessToken}`
+                    Authorization: `Bearer ${user.accessToken}`
                 }
             }
 
@@ -186,15 +186,15 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
 
             const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/user?search=${query}`, {
                 headers: {
-                    Authorization: `Bearer ${user.data.accessToken}`,
+                    Authorization: `Bearer ${user.accessToken}`,
                     'Content-Type': 'application/json',
                 },
                 credentials: "include",
             });
 
-            // console.log("user array :response from searched user: ", data.data.users);
-            setSearchResult(data.data.users);
-            console.log(data.data.users)
+            // console.log("user array :response from searched user: ", data);
+            setSearchResult(data.users);
+            console.log(data.users)
             setLoading(false)
 
         } catch (error) {
@@ -267,7 +267,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                     <DialogFooter>
                         <Button
                             className='bg-red-500 text-white hover:bg-red-600'
-                            onClick={() => handleRemoveUser(user.data.user)}>
+                            onClick={() => handleRemoveUser(user)}>
                             Leave Group
                         </Button>
                     </DialogFooter>

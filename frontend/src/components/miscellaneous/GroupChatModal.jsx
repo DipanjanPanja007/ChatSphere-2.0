@@ -44,17 +44,18 @@ const GroupCharModal = ({ children }) => {
 
             const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/user?search=${query}`, {
                 headers: {
-                    Authorization: `Bearer ${user.data.accessToken}`,
+                    Authorization: `Bearer ${user.accessToken}`,
                     'Content-Type': 'application/json',
                 },
                 credentials: "include",
             });
 
-            // console.log("user array :response from searched user: ", data.data.users);
-            setSearchResult(data.data.users);
+            // console.log("user array :response from searched user: ", data.users);
+            setSearchResult(data.users);
 
 
         } catch (error) {
+            console.log(error);
             toast({
                 description: "Failed to search users while creating group chat",
                 variant: "error",
@@ -98,14 +99,14 @@ const GroupCharModal = ({ children }) => {
             return;
         }
         try {
-            const data = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/chat/group`,
+            const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/chat/group`,
                 {
                     groupName: groupChatName,
                     users: JSON.stringify(selectedUsers.map(user => user._id))
                 },
                 {
                     headers: {
-                        Authorization: `Bearer ${user.data.accessToken}`,
+                        Authorization: `Bearer ${user.accessToken}`,
                         'Content-Type': 'application/json',
                     }
                 }
@@ -115,7 +116,7 @@ const GroupCharModal = ({ children }) => {
                 console.log("group chat is not created");
             }
 
-            setChats([data.data.data, ...chats]);
+            setChats([data.createdGroupChat, ...chats]);
 
             toast({
                 title: `Group chat: ${groupChatName} is created`,

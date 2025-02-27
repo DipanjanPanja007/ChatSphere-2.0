@@ -23,11 +23,11 @@ const ScrollableChat = ({ messages }) => {
                 {messages &&
                     messages.map((currMessage, index) => (
                         <div
-                            className={`flex w-full ${currMessage.sender._id === user.data.user._id ? "justify-end" : "justify-start"}`}
+                            className={`flex w-full ${currMessage.sender._id === user._id ? "justify-end" : "justify-start"}`}
                             key={currMessage._id}
                         >
                             {/* Avatar logic */}
-                            {currMessage.sender._id !== user.data.user._id &&
+                            {currMessage.sender._id !== user._id &&
                                 (index === messages.length - 1 ||
                                     messages[index + 1].sender._id !== currMessage.sender._id) && (
                                     <TooltipProvider>
@@ -47,13 +47,13 @@ const ScrollableChat = ({ messages }) => {
                             {/* Message bubble */}
                             <span
                                 className={`rounded-[1.5rem] px-4 py-2 max-w-[75%] 
-                                ${currMessage.sender._id === user.data.user._id ? "bg-[#BFA7FA]" : "bg-[#F0B99E]"} text-black`}
+                                ${currMessage.sender._id === user._id ? "bg-[#BFA7FA]" : "bg-[#F0B99E]"} text-black`}
                                 style={{
                                     wordBreak: "break-word", // Ensures text breaks within words
                                     overflowWrap: "break-word", // Wraps long words properly
                                     marginLeft:
-                                        currMessage.sender._id !== user.data.user._id
-                                            ? setSenderMargin(messages, currMessage, index, user.data.user._id)
+                                        currMessage.sender._id !== user._id
+                                            ? setSenderMargin(messages, currMessage, index, user._id)
                                             : undefined,
                                     marginTop: isSameUser(messages, currMessage, index) ? "3px" : "10px",
                                 }}

@@ -48,12 +48,12 @@ const SideDrawer = () => {
         try {
             setLoading(true);
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/user?search=${search}`, {
-                headers: { Authorization: `Bearer ${user.data.accessToken}`, "Content-Type": "application/json" },
+                headers: { Authorization: `Bearer ${user.accessToken}`, "Content-Type": "application/json" },
                 credentials: "include",
             });
             // console.log(response.data.data.users);
 
-            setSearchResult(response.data.data.users);
+            setSearchResult(response.data.users);
         } catch (error) {
             toast({
                 title: "Error occurred while searching user",
@@ -70,7 +70,7 @@ const SideDrawer = () => {
             setLoadingChat(true);
             const config = {
                 headers: {
-                    Authorization: `Bearer ${user.data.accessToken}`,
+                    Authorization: `Bearer ${user.accessToken}`,
                     'Content-Type': 'application/json',
                 }
             };
@@ -187,13 +187,13 @@ const SideDrawer = () => {
                         <DropdownMenuTrigger
                             className={`flex items-center space-x-2 outline-none ${darkMode ? "dark-bg-gray dark-font hover:bg-slate-500" : "light-bg-gray light-font hover:bg-slate-300"} px-4 py-2 rounded-md`} >
                             <Avatar className="w-8 h-8">
-                                <AvatarImage src={user.data.user.profilePic} className="rounded-full mx-auto object-cover" />
+                                <AvatarImage src={user.profilePic} className="rounded-full mx-auto object-cover" />
                                 <AvatarFallback>User</AvatarFallback>
                             </Avatar>
                             <i className={`fa-solid fa-angle-down ${darkMode ? "dark-font" : "light-font"}`} />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className={`justify-center ${darkMode ? "dark-bg-gray dark-font" : "light-bg-gray light-font"} `} >
-                            <ProfileModal user={user.data.user}
+                            <ProfileModal user={user}
                                 className='flex justify-center items-center p-0'>
                                 <DropdownMenuLabel
                                     className={`px-6 py-3 rounded-sm cursor-pointer text-center ${darkMode ? "hover:bg-slate-300 hover:text-black" : "hover:bg-slate-300"} `}
