@@ -17,7 +17,7 @@ const MyChats = ({ fetchAgain }) => {
     const [toastMessage, setToastMessage] = useState("");
 
     const fetchChats = async () => {
-        console.log("fetching chats");
+        // console.log("fetching chats");
         try {
             const { data } = await axios.get(
                 `${import.meta.env.VITE_BACKEND_URI}/api/chat`,
@@ -29,7 +29,7 @@ const MyChats = ({ fetchAgain }) => {
                     credentials: "include",
                 }
             );
-            console.log("data", data);
+            // console.log("data", data);
 
             setChats(data.result);
         } catch (error) {

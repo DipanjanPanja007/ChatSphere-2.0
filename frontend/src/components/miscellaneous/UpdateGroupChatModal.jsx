@@ -232,7 +232,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                             <form className='flex mb-1'>
                                 <Input
                                     placeholder='Chat Name'
-                                    className={`mb-3 ${darkMode ? "dark-bg-gray dark-font" : "light-bg-gray light-font"}`}
+                                    className={`mb-3 ${darkMode ? "dark-bg-gray dark-font" : "light-bg-white light-font"}`}
                                     value={groupChatName}
                                     onChange={(e) => (setGroupChatName(e.target.value))}
                                 />
@@ -245,7 +245,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                             <form className=''>
                                 <Input
                                     placeholder='Add User into Group'
-                                    className={`mb-3 ${darkMode ? "dark-bg-gray dark-font" : "light-bg-gray light-font"}`}
+                                    className={`mb-3 ${darkMode ? "dark-bg-gray dark-font" : "light-bg-white light-font"}`}
                                     onChange={(e) => handleSearch(e.target.value)}
                                 />
                             </form>

@@ -51,7 +51,7 @@ const SideDrawer = () => {
                 headers: { Authorization: `Bearer ${user.accessToken}`, "Content-Type": "application/json" },
                 credentials: "include",
             });
-            // console.log(response.data.data.users);
+            // console.log(response.data.users);
 
             setSearchResult(response.data.users);
         } catch (error) {
