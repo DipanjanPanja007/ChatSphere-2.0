@@ -7,21 +7,22 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { ChatState } from "../../Context/ChatProvider"
 import '../../App.css'
 import { DropdownMenu } from '@radix-ui/react-dropdown-menu'
 import { DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu'
 import { useToast } from "@/hooks/use-toast"
 import axios from 'axios'
+import { ChatState } from "@/Context/ChatProvider";
 
 
 
-const ProfileModal = ({ user, children }) => {
+const ProfileModal = ({ children }) => {
 
     const { toast } = useToast();
     const { darkMode } = ChatState();
-    const [isOpen, setIsOpen] = useState(false); // ✅ Control modal state
+    const [isOpen, setIsOpen] = useState(false); // Control modal state
     const [tempProfilePic, setTempProfilePic] = useState(null);
+    const { user, setUser } = ChatState();
 
     const changeProfilePic = async (e) => {
         console.log("changeProfilePic called");
@@ -92,11 +93,12 @@ const ProfileModal = ({ user, children }) => {
         console.log(response.data);
 
         let userInfo = localStorage.getItem('userInfo');
-        console.log("before userInfo: ", userInfo);
         userInfo = JSON.parse(userInfo);
-        userInfo.data.user.profilePic = response.data.profilePic;
+        console.log("before userInfo: ", userInfo);
+        userInfo.profilePic = response.data.profilePic;
         console.log("after userInfo: ", userInfo);
-        localStorage.setItem('userInfo', JSON.stringify({ userInfo }));
+        setUser(userInfo);
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
 
         toast({
             variant: 'success',

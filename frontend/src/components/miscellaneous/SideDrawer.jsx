@@ -10,7 +10,6 @@ import Loading from "./Loading";
 import { useToast } from "@/hooks/use-toast";
 import UserListItem from "./UserListItem";
 import { getSender } from "@/config/ChatLogic";
-import { Button } from "../ui/button";
 
 
 
@@ -193,7 +192,7 @@ const SideDrawer = () => {
                             <i className={`fa-solid fa-angle-down ${darkMode ? "dark-font" : "light-font"}`} />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className={`justify-center ${darkMode ? "dark-bg-gray dark-font" : "light-bg-gray light-font"} `} >
-                            <ProfileModal user={user}
+                            <ProfileModal
                                 className='flex justify-center items-center p-0'>
                                 <DropdownMenuLabel
                                     className={`px-6 py-3 rounded-sm cursor-pointer text-center ${darkMode ? "hover:bg-slate-300 hover:text-black" : "hover:bg-slate-300"} `}

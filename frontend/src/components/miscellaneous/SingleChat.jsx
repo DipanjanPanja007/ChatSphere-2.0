@@ -198,7 +198,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             });
             // console.log(data);
 
-            // setMessages(data.messages);
+            setMessages(data.messages);
             setLoading(false);
         } catch (error) {
             toast({

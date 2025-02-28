@@ -312,17 +312,19 @@ const updateProfilePic = asyncHandler(async (req, res) => {
     }
 
     // step#2: upload new profile pic on cloudinary
-    let profilePic = ""
+    let profilePic = "";
     if (profilePicPath) {
         profilePic = await uploadOnCloudinary(profilePicPath, req.file.filename);
     }
+    console.log("profilePic: ", profilePic);
     if (!profilePic || !profilePic.url) {
         throw new ApiError(500, "Something went wrong while updating profile pic");
     }
 
     // step#3: delete old profile pic from cloudinary
     const prevPicture = req.user.profilePic;
-    if (prevPicture) {
+    if (prevPicture && prevPicture !== "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg") {
+        console.log("prevPicture: ", prevPicture);
         const deletePreviousPic = await deleteFromCloudinary(prevPicture);
         console.log("deletePreviousPic: ", deletePreviousPic);
         if (!deletePreviousPic) {
@@ -343,8 +345,7 @@ const updateProfilePic = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(
-            user,
-            "Profile pic updated successfully"
+            user
         )
 });
 
@@ -365,8 +366,7 @@ const deleteProfilePic = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(
-            user,
-            "Profile pic deleted successfully"
+            user
         )
 });
 
