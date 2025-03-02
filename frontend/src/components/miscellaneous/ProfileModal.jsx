@@ -26,7 +26,6 @@ const ProfileModal = ({ children }) => {
     const fileInputRef = useRef(null);
 
     const changeProfilePic = async () => {
-        console.log("changeProfilePic called");
         const profilePicFile = tempProfilePic || null;
         if (!profilePicFile) {
             return toast({
@@ -48,14 +47,14 @@ const ProfileModal = ({ children }) => {
                     },
                 }
             );
-            console.log("response: ", response);
+            // console.log("response: ", response);
             if (response.status !== 200) {
                 throw new Error(response.data?.message || "failed to change profile picture");
             }
 
             let userInfo = localStorage.getItem('userInfo');
             userInfo = JSON.parse(userInfo);
-            console.log("userInfo: ", userInfo);
+            // console.log("userInfo: ", userInfo);
             userInfo.profilePic = response.data.profilePic;
             localStorage.setItem('userInfo', JSON.stringify(userInfo));
             setUser(userInfo);
@@ -80,7 +79,7 @@ const ProfileModal = ({ children }) => {
 
     useEffect(() => {
         if (tempProfilePic) {
-            console.log("pf: ", tempProfilePic);
+            // console.log("pf: ", tempProfilePic);
             changeProfilePic();
         }
     }, [tempProfilePic])
@@ -101,13 +100,13 @@ const ProfileModal = ({ children }) => {
         if (response.status !== 200) {
             throw new Error(response.data?.message || "failed to delete profile picture");
         }
-        console.log(response.data);
+        // console.log(response.data);
 
         let userInfo = localStorage.getItem('userInfo');
         userInfo = JSON.parse(userInfo);
-        console.log("before userInfo: ", userInfo);
+        // console.log("before userInfo: ", userInfo);
         userInfo.profilePic = response.data.profilePic;
-        console.log("after userInfo: ", userInfo);
+        // console.log("after userInfo: ", userInfo);
         setUser(userInfo);
         localStorage.setItem('userInfo', JSON.stringify(userInfo));
 
@@ -163,33 +162,12 @@ const ProfileModal = ({ children }) => {
                                             accept="image/*"
                                             className="hidden"
                                             onChange={(e) => {
-                                                console.log("file: ", e.target.files);
                                                 const file = e.target.files[0];
                                                 if (file) {
                                                     setTempProfilePic(file); // Preview the selected image
                                                 }
                                             }}
                                         />
-
-
-
-
-                                        {/* <input
-                                            type="file"
-                                            id="profilePic"
-                                            ref={fileInputRef}
-                                            accept="image/*"
-                                            className="hidden"
-                                            // className="absolute w-0 h-0 opacity-0 pointer-events-none"
-                                            onChange={(e) => {
-                                                const file = e.target.files[0];
-                                                if (file) {
-                                                    setTempProfilePic(file); // Preview the selected image
-                                                    // console.log("file: ", file);
-                                                }
-                                                // changeProfilePic(); // Then call the upload function
-                                            }}
-                                        /> */}
 
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem

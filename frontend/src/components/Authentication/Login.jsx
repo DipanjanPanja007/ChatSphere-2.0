@@ -31,7 +31,7 @@ const Login = () => {
             });
             return;
         }
-        console.log(`email: ${info.email}, pass: ${info.password}`);
+        // console.log(`email: ${info.email}, pass: ${info.password}`);
 
 
         const data = {
@@ -51,21 +51,21 @@ const Login = () => {
 
             const responsedata = response.data
 
-            console.log(responsedata);
+            // console.log(responsedata);
 
 
             // const userInfoForLocalStorage = await response.data.user.json()
 
             localStorage.setItem("userInfo", JSON.stringify(responsedata));
 
-            console.log(`response : ${response}`);
+            // console.log(`response : ${response}`);
 
             if (!responsedata) {
                 toast({
                     title: "Failed to register!",
                     variant: "error"
                 });
-                console.log("Failed to register!");
+                // console.log("Failed to register!");
                 return;
             }
 

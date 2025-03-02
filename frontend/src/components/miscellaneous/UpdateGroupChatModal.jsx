@@ -213,13 +213,19 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                     <DialogHeader>
                         <DialogTitle
                             className='text-center font-bold text-3xl'
-                        >{selectedChat.chatName.toUpperCase()}
+                        >{selectedChat.chatName}
                         </DialogTitle>
                         <DialogDescription>
                             {
                                 selectedChat.isGroupChat ?
                                     (<h3 className={`text=xl ${darkMode ? "dark-font" : "light-font"} `}>Group admin is: {selectedChat.groupAdmin.name}</h3>) : (<></>)
                             }
+                            <div>
+                                {/* <img
+                                            src={selectedChat.}
+                                            className="w-60 h-60 rounded-full object-cover transition duration-300 ease-in-out"
+                                        /> */}
+                            </div>
 
                             <div className='flex wrap w-full pb-2 my-4 justify-between'>
                                 {
