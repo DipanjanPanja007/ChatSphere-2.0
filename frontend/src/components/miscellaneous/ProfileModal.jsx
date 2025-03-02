@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -23,20 +23,23 @@ const ProfileModal = ({ children }) => {
     const [isOpen, setIsOpen] = useState(false); // Control modal state
     const [tempProfilePic, setTempProfilePic] = useState(null);
     const { user, setUser } = ChatState();
+    const fileInputRef = useRef(null);
 
-    const changeProfilePic = async (e) => {
+    const changeProfilePic = async () => {
         console.log("changeProfilePic called");
-        // e.preventDefault();
         const profilePicFile = tempProfilePic || null;
         if (!profilePicFile) {
-            return toast('error', 'No file selected!');
+            return toast({
+                title: 'No file selected',
+                variant: 'error',
+            })
         }
         const formData = new FormData();
-        formData.append('profilePic', profilePicFile);
+        formData.append('profilePicture', profilePicFile);
 
         try {
             const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URI}/api/user/updateDp?imageUrl=${user.profilePic}`,
+                `${import.meta.env.VITE_BACKEND_URI}/api/user/updateDp`,
                 formData,
                 {
                     withCredentials: true,
@@ -53,10 +56,9 @@ const ProfileModal = ({ children }) => {
             let userInfo = localStorage.getItem('userInfo');
             userInfo = JSON.parse(userInfo);
             console.log("userInfo: ", userInfo);
-            userInfo.user.profilePic = response.data.profilePic;
             userInfo.profilePic = response.data.profilePic;
-            localStorage.setItem('userInfo', JSON.stringify({ user: userInfo }));
-
+            localStorage.setItem('userInfo', JSON.stringify(userInfo));
+            setUser(userInfo);
 
 
             // success message
@@ -66,7 +68,9 @@ const ProfileModal = ({ children }) => {
             })
 
             // Clear file input
-            document.getElementById("profilePic").value = "";
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
         } catch (error) {
             console.log("Error occoured while changing profile picture: ", error);
         }
@@ -74,9 +78,16 @@ const ProfileModal = ({ children }) => {
 
     };
 
+    useEffect(() => {
+        if (tempProfilePic) {
+            console.log("pf: ", tempProfilePic);
+            changeProfilePic();
+        }
+    }, [tempProfilePic])
+
     const deleteProfilePic = async () => {
 
-        console.log(user);
+        // console.log(user);
         if (user.profilePic === "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg") {
             return toast({
                 variant: 'error',
@@ -134,28 +145,51 @@ const ProfileModal = ({ children }) => {
                                             Show Photo
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
+
+
+
                                         {/* Change photo section */}
                                         <DropdownMenuItem
-                                            className="cursor-pointer"
-                                            onClick={() => document.getElementById("profilePic").click()}
+                                            onSelect={(e) => e.preventDefault()}
                                         >
-                                            Change Photo
+                                            <label htmlFor="profilePict" className="cursor-pointer" >Change Photo
+                                            </label>
                                         </DropdownMenuItem>
                                         {/* Hidden File Input for photo */}
                                         <input
                                             type="file"
-                                            id="profilePic"
+                                            id="profilePict"
+                                            ref={fileInputRef}
                                             accept="image/*"
                                             className="hidden"
                                             onChange={(e) => {
+                                                console.log("file: ", e.target.files);
                                                 const file = e.target.files[0];
                                                 if (file) {
-                                                    console.log("file received !!!!!!!!!!!!!!!")
                                                     setTempProfilePic(file); // Preview the selected image
                                                 }
-                                                changeProfilePic(e, file); // Then call the upload function
                                             }}
                                         />
+
+
+
+
+                                        {/* <input
+                                            type="file"
+                                            id="profilePic"
+                                            ref={fileInputRef}
+                                            accept="image/*"
+                                            className="hidden"
+                                            // className="absolute w-0 h-0 opacity-0 pointer-events-none"
+                                            onChange={(e) => {
+                                                const file = e.target.files[0];
+                                                if (file) {
+                                                    setTempProfilePic(file); // Preview the selected image
+                                                    // console.log("file: ", file);
+                                                }
+                                                // changeProfilePic(); // Then call the upload function
+                                            }}
+                                        /> */}
 
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem

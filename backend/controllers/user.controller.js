@@ -310,6 +310,7 @@ const updateProfilePic = asyncHandler(async (req, res) => {
     } else {
         throw new ApiError(400, "Profile pic not given")
     }
+    console.log("pf path: ", profilePicPath);
 
     // step#2: upload new profile pic on cloudinary
     let profilePic = "";

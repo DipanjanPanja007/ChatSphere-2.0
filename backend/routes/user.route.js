@@ -12,7 +12,7 @@ router.post('/login', loginUser);
 
 router.post('/otp', reqOTP);
 
-router.put('/updateDp', upload.single('profilePic'), verifyJWT, updateProfilePic);
+router.put('/updateDp', upload.single('profilePicture'), verifyJWT, updateProfilePic);
 
 router.delete('/deleteDp', verifyJWT, deleteProfilePic);
 
