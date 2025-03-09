@@ -6,7 +6,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import ProfileModal from "./ProfileModal";
-import Loading from "./Loading";
 import { useToast } from "@/hooks/use-toast";
 import UserListItem from "./UserListItem";
 import { getSender } from "@/config/ChatLogic";

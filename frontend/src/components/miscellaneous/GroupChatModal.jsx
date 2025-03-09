@@ -15,7 +15,7 @@ import UserBadgeItem from './UserBadgeItem'
 import axios from 'axios'
 import { ChatState } from '@/Context/ChatProvider'
 import UserListItem from './UserListItem'
-import Loading from './Loading'
+import SkeletonUI from './Skeleton'
 
 
 
@@ -177,7 +177,7 @@ const GroupCharModal = ({ children }) => {
                                 }
                             </div>
                             {
-                                loading ? <div><Loading /></div> : (
+                                loading ? <div><SkeletonUI /></div> : (
                                     searchResult?.slice(0, 4).map((user) => (
                                         <UserListItem
                                             key={user._id}

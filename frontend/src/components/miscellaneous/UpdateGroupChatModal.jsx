@@ -14,8 +14,8 @@ import { ChatState } from '@/Context/ChatProvider';
 import UserBadgeItem from './UserBadgeItem';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import Loading from './Loading';
 import UserListItem from './UserListItem';
+import SkeletonUI from './Skeleton';
 
 
 const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
@@ -194,7 +194,6 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
 
             // console.log("user array :response from searched user: ", data);
             setSearchResult(data.users);
-            console.log(data.users)
             setLoading(false)
 
         } catch (error) {
@@ -265,7 +264,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                                         />
                                     ))
                                 ) : (
-                                    <Loading />
+                                    <SkeletonUI />
                                 )
                             }
                         </DialogDescription>

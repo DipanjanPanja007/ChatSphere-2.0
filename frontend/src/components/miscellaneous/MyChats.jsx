@@ -4,11 +4,11 @@ import { ChatState } from "../../Context/ChatProvider";
 import axios from "axios";
 import { getSender } from "../../config/ChatLogic.js";
 import GroupChatModal from "./GroupChatModal.jsx";
-import Loading from "./Loading";
 // import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "../ui/button";
 
 import '../../App.css';
+import SkeletonUI from "./Skeleton";
 
 
 const MyChats = ({ fetchAgain }) => {
@@ -79,7 +79,7 @@ const MyChats = ({ fetchAgain }) => {
                             ))}
                         </div>
                     ) : (
-                        <Loading />
+                        <SkeletonUI />
                     )}
                 </div>
 

@@ -11,6 +11,7 @@ import axios from 'axios';
 import send_btn from '../../public/send_btn.png';
 
 import '../../App.css';
+import Loading from './Loading';
 
 const ENDPOINT = import.meta.env.VITE_BACKEND_URI;
 let socket, selectedChatCompare;
@@ -256,7 +257,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     <div className={`flex flex-col justify-between w-full h-[91%] rounded-lg p-3 bg-chatBox-pic ${darkMode ? "bg-chatBox-bg-dark" : "bg-chatBox-bg-light"}`}>
                         {/* Chat Messages Container */}
                         <div className="flex mb-3 overflow-y-auto">
-                            {loading ? <>Loading Chats...</> : <ScrollableChat messages={messages} />}
+                            {loading ? <><Loading /></> : <ScrollableChat messages={messages} />}
                         </div>
 
                         {/* Input Field */}

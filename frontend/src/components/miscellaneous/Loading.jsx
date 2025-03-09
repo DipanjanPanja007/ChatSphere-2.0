@@ -1,45 +1,13 @@
-import React from 'react'
-import { Skeleton } from "@/components/ui/skeleton"
+import { ChatState } from "@/Context/ChatProvider";
+import React from "react";
 
-
-const Loading = () => {
+const Loading = ({ width = "w-full" }) => {
+    const { darkMode } = ChatState()
     return (
-        <>
-            <div className="flex items-center space-x-1 my-4">
-                <Skeleton className="h-10 w-10 rounded-full" />
-                <div className="space-y-2 ml-2">
-                    <Skeleton className="h-4 w-[220px]" />
-                    <Skeleton className="h-4 w-[170px]" />
-                </div>
-            </div>
+        <div className={`flex justify-center items-center ${width} h-20`}>
+            <div className={`animate-spin rounded-full h-10 w-10 border-t-4 border-white border-solid`}></div>
+        </div>
+    );
+};
 
-            <div className="flex items-center space-x-1 my-4">
-                <Skeleton className="h-10 w-10 rounded-full" />
-                <div className="space-y-2 ml-2">
-                    <Skeleton className="h-4 w-[220px]" />
-                    <Skeleton className="h-4 w-[170px]" />
-                </div>
-            </div>
-
-            <div className="flex items-center space-x-1 my-4">
-                <Skeleton className="h-10 w-10 rounded-full" />
-                <div className="space-y-2 ml-2">
-                    <Skeleton className="h-4 w-[220px]" />
-                    <Skeleton className="h-4 w-[170px]" />
-                </div>
-            </div>
-
-            <div className="flex items-center space-x-1 my-4">
-                <Skeleton className="h-10 w-10 rounded-full" />
-                <div className="space-y-2 ml-2">
-                    <Skeleton className="h-4 w-[220px]" />
-                    <Skeleton className="h-4 w-[170px]" />
-                </div>
-            </div>
-
-
-        </>
-    )
-}
-
-export default Loading
+export default Loading;
