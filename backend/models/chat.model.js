@@ -33,12 +33,18 @@ const chatModel = mongoose.Schema(
         groupAdmin: {
             type: mongoose.Types.ObjectId,
             ref: "User",
-        }
+        },
+        groupIcon: {
+            type: String,
+            default: function () {
+                return this.isGroupChat ? "https://icon-library.com/images/default-profile-icon/default-profile-icon-24.jpg" : "";
+            },
+        },
     },
     {
         timestamps: true
     }
-)
+);
 
 const Chat = mongoose.model("Chat", chatModel);
 export { Chat };

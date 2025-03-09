@@ -24,6 +24,14 @@ const userSchema = mongoose.Schema(
         refreshToken: {
             type: String,
         },
+        onlineStatus: {
+            type: Boolean,
+            default: false,
+        },
+        lastSeen: {
+            type: Date,
+            default: null,
+        },
     },
     {
         timestamps: true
