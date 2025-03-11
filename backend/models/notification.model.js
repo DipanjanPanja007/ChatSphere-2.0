@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 const notificationSchema = mongoose.Schema(
     {
         user: {
-            type: mongoose.Schema.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "User",
             required: true
         },
         chat: {
-            type: mongoose.Schema.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "Chat",
             required: true
         },
@@ -17,11 +17,11 @@ const notificationSchema = mongoose.Schema(
             default: 0
         },
         lastMessage: {
-            type: mongoose.Schema.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "Message"
         },
         sender: {
-            type: mongoose.Schema.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "User",
             required: true
         }

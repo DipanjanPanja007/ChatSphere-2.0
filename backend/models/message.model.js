@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const messageModel = mongoose.Schema(
     {
         sender: {
-            type: mongoose.Schema.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "User",
             required: true
         },
@@ -30,21 +30,34 @@ const messageModel = mongoose.Schema(
             }
         ],
         chat: {
-            type: mongoose.Schema.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "Chat",
             required: true
         },
-        readBy: [
-            {
-                type: mongoose.Schema.ObjectId,
-                ref: "User"
-            }
-        ],
         replyTo: {
-            type: mongoose.Schema.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "Message",
             default: null
         },
+        reactions: [
+            {
+                userId: {
+                    type: mongoose.Types.ObjectId,
+                    ref: "User",
+                    required: true
+                },
+                reaction: {
+                    type: String,
+                    required: true
+                }
+            }
+        ],
+        readBy: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: "User"
+            }
+        ],
     },
     {
         timestamps: true,
