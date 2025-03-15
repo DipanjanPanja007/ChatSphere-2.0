@@ -86,10 +86,10 @@ const reqOTP = asyncHandler(async (req, res) => {
     // step#5: send response
     return res
         .status(200)
-        .json(
-            { email },
-            "OTP sent successfully"
-        )
+        .json({
+            email: email,
+            messgae: "OTP sent successfully",
+        })
 });
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -128,10 +128,9 @@ const registerUser = asyncHandler(async (req, res) => {
     if (otpExists.otp !== otp) {       // if wrong otp
         return res
             .status(400)
-            .json(
-                null,
-                "Incorrect OTP, try again..."
-            )
+            .json({
+                message: "Incorrect OTP, try again..."
+            })
     }
 
 
@@ -174,10 +173,10 @@ const registerUser = asyncHandler(async (req, res) => {
     // return info
     return res
         .status(200)
-        .json(
-            createdUser,
-            "User registered successfully"
-        )
+        .json({
+            user: createdUser,
+            messagge: "User registered successfully"
+        })
 });
 
 const registerByGoogle = asyncHandler(async (req, res) => {
@@ -371,4 +370,13 @@ const deleteProfilePic = asyncHandler(async (req, res) => {
         )
 });
 
-export { reqOTP, registerUser, loginUser, allUsers, updateProfilePic, deleteProfilePic, registerByGoogle, loginByGoogle }
+export {
+    reqOTP,
+    registerUser,
+    loginUser,
+    allUsers,
+    updateProfilePic,
+    deleteProfilePic,
+    registerByGoogle,
+    loginByGoogle
+}

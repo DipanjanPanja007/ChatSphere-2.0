@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js"
 import { Chat } from "../models/chat.model.js"
 import asyncHandler from "express-async-handler";
 import { ApiError } from "../utils/ApiError.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 
 
 
@@ -103,13 +104,31 @@ const createGroupChat = asyncHandler(async (req, res) => {
      * step#4: return new groupChat
      */
 
-    // step#1: take input : group name and users
+    // step#1: take input : group name , users and groupIcon(if available)
     const { users, groupName } = req.body;
+    const groupIcon = req.file ? req.file.path : "";
+
+    console.log("groupIcon: ", groupIcon);
+
+    let groupIconUrl = "https://res.cloudinary.com/du4bs9xd2/image/upload/v1742054125/default-group-image_szgp67.jpg";
+    if (groupIcon) {
+        // upload on cloudinary
+
+        let groupIconUpload = await uploadOnCloudinary(groupIcon, req.file.filename);
+
+        if (groupIcon && !groupIconUpload.secure_url) {
+            throw new ApiError(500, "Something went wrong while uploading groupIcon pic on cloudinary");
+        }
+        console.log("groupIconUrl: ", groupIconUpload);
+        groupIconUrl = groupIconUpload.secure_url;
+    }
+
     if (!users || !groupName) {
         throw new ApiError(400, "A groupName and Group Participates required")
     }
 
-    let allUsers = JSON.parse(users);
+    let allUsers = users.split(/[,\s]+/).filter(id => id.trim() !== "");
+    console.log("allUsers: ", allUsers);
 
     if (allUsers.length < 2) {
         throw new ApiError(400, `You need atleast ${2 - allUsers.length} participates to create a group `)
@@ -124,7 +143,8 @@ const createGroupChat = asyncHandler(async (req, res) => {
             chatName: groupName,
             users: allUsers,
             isGroupChat: true,
-            groupAdmin: req.user
+            groupAdmin: req.user,
+            groupIcon: groupIconUrl.secure_url,
         });
 
         const createdGroupChat = await Chat.findOne({ _id: groupChat._id })
@@ -254,6 +274,85 @@ const removeFromGroup = asyncHandler(async (req, res) => {
 
 });
 
+const updateGroupIcon = asyncHandler(async (req, res) => {
+    /*
+     * step#1: check for GroupIcon given or not... ( from middleware )
+     * step#2: upload new GroupIcon pic on cloudinary
+     * step#3: delete old GroupIcon pic from cloudinary
+     * step#4: update GroupIcon in Chat collection
+     */
+
+    // input: chatId
+    const { chatId } = req.body;
+    if (!chatId) {
+        throw new ApiError(400, "ChatId not found")
+    }
+
+    // step#1: check for profilePicture given or not... ( from middleware )
+    console.log("req.file: ", req.file);
+    let groupIconPath = "";
+    if (req.file) {
+        groupIconPath = req.file.path;
+    } else {
+        throw new ApiError(400, "Profile pic not given")
+    }
+    console.log("pf path: ", groupIconPath);
+
+    // step#2: upload new GroupIcon pic on cloudinary
+    let groupIconPic = "";
+    if (groupIconPath) {
+        groupIconPic = await uploadOnCloudinary(groupIconPath, req.file.filename);
+    }
+    console.log("profilePic: ", groupIconPic);
+    if (!groupIconPic || !groupIconPic.url) {
+        throw new ApiError(500, "Something went wrong while updating profile pic");
+    }
+
+    // step#3: delete old GroupIcon pic from cloudinary
+
+    const chat = await Chat.findById(chatId);
+    console.log("chat: ", chat);
+    if (!chat) {
+        throw new ApiError(400, "Chat not found")
+    }
+    const prevPicture = chat.groupIcon;
+
+    if (prevPicture && prevPicture !== "https://res.cloudinary.com/du4bs9xd2/image/upload/v1742054125/default-group-image_szgp67.jpg") {
+        console.log("prevPicture: ", prevPicture);
+        const deletePreviousPic = await deleteFromCloudinary(prevPicture);
+        console.log("deletePreviousPic: ", deletePreviousPic);
+        if (!deletePreviousPic) {
+            console.log("previous pic cannot be deleted successfully");
+        }
+        else {
+            console.log("previous pic deleted successfully");
+        }
+    }
+
+    // step#4: update GroupIcon in Chat collection
+    const updatedGroupChat = await Chat.findByIdAndUpdate(
+        chatId,
+        {
+            groupIcon: groupIconPic.url
+        },
+        {
+            new: true
+        }
+    )
+        .populate("users", "-password")
+        .populate("groupAdmin", "-password")
+
+    if (!updateGroupIcon) {
+        throw new ApiError(400, "GroupIcon not updated")
+    }
+
+    res
+        .status(201)
+        .json({
+            updatedGroupChat
+        })
+
+});
 
 
 
@@ -264,4 +363,5 @@ export {
     renameGroup,
     addToGroup,
     removeFromGroup,
+    updateGroupIcon,
 } 
