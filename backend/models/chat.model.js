@@ -37,7 +37,7 @@ const chatModel = mongoose.Schema(
         groupIcon: {
             type: String,
             default: function () {
-                return this.isGroupChat ? "https://icon-library.com/images/default-profile-icon/default-profile-icon-24.jpg" : "";
+                return this.isGroupChat ? "https://res.cloudinary.com/du4bs9xd2/image/upload/v1742054125/default-group-image_szgp67.jpg" : "";
             },
         },
     },

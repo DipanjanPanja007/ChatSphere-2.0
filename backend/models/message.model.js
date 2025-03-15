@@ -12,11 +12,6 @@ const messageModel = mongoose.Schema(
             type: String,
             trim: true,
         },
-        contentType: {
-            type: String,
-            enum: ["text", "image", "video", "audio", "document", "gif", "file"],
-            default: "text"
-        },
         attachments: [
             {
                 url: {
@@ -25,7 +20,7 @@ const messageModel = mongoose.Schema(
                 },
                 fileType: {
                     type: String,
-                    enum: ["image", "video", "audio", "document", "gif", "file"]
+                    enum: ["image", "video", "audio", "document", "gif"]
                 },
             }
         ],
