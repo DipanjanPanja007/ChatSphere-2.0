@@ -1,7 +1,6 @@
 import asyncHandler from "express-async-handler";
 import { Message } from "../models/message.model.js"
 import { User } from "../models/user.model.js"
-import { ApiError } from "../utils/ApiError.js";
 import { Chat } from "../models/chat.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
@@ -36,7 +35,7 @@ const sendMessage = asyncHandler(async (req, res) => {
         return res
             .status(400)
             .json({
-                "message": "chatId and content both are required"
+                message: "chatId and content both are required"
             })
     }
 
@@ -75,14 +74,18 @@ const sendMessage = asyncHandler(async (req, res) => {
 
         console.log('message', message);
 
-        return res
+        res
             .status(201)
             .json({
                 message
             })
 
     } catch (error) {
-        throw new ApiError(400, `Caught an error while sending message: ${error.message}`)
+        res
+            .status(400)
+            .json({
+                message: `Caught an error while sending message: ${error.message}`
+            })
     }
 })
 
@@ -92,13 +95,17 @@ const allMessages = asyncHandler(async (req, res) => {
             .populate("sender", "name profilePic email")
             .populate("chat")
 
-        return res
+        res
             .status(201)
             .json({
                 messages
             })
     } catch (error) {
-        throw new ApiError(400, `caught error while fetching all messages for a chat ${error.message}`)
+        res
+            .status(400)
+            .json({
+                "message": `caught error while fetching all messages for a chat ${error.message}`
+            })
     }
 });
 

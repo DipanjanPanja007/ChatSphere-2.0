@@ -1,7 +1,6 @@
 import { User } from "../models/user.model.js"
 import { Chat } from "../models/chat.model.js"
 import asyncHandler from "express-async-handler";
-import { ApiError } from "../utils/ApiError.js";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 
 
@@ -18,7 +17,11 @@ const accessChat = asyncHandler(async (req, res) => {
     const { userId } = req.body;
 
     if (!userId) {
-        throw new ApiError(400, "UserId not found to chat with ... ")
+        res
+            .status(400)
+            .json({
+                message: "UserId not found to chat with ... "
+            })
     }
 
     // step#3: search for chat with 2nd person
@@ -60,10 +63,11 @@ const accessChat = asyncHandler(async (req, res) => {
                     FullChat
                 )
         } catch (error) {
-            throw new ApiError(
-                400,
-                `something went wrong while creating new chat ${error?.message}`
-            )
+            res
+                .status(400)
+                .json({
+                    message: `something went wrong while creating new chat ${error?.message}`
+                })
         }
 
     }
@@ -92,7 +96,11 @@ const fetchChats = asyncHandler(async (req, res) => {
                     })
             })
     } catch (error) {
-        throw new ApiError(400, `Error from fetchChats : ${error.message}`)
+        res
+            .status(400)
+            .json({
+                message: `Error from fetchChats : ${error.message}`
+            })
     }
 });
 
@@ -117,21 +125,33 @@ const createGroupChat = asyncHandler(async (req, res) => {
         let groupIconUpload = await uploadOnCloudinary(groupIcon, req.file.filename);
 
         if (groupIcon && !groupIconUpload.secure_url) {
-            throw new ApiError(500, "Something went wrong while uploading groupIcon pic on cloudinary");
+            res
+                .status(400)
+                .json({
+                    message: "Something went wrong while uploading groupIcon pic on cloudinary"
+                })
         }
         console.log("groupIconUrl: ", groupIconUpload);
         groupIconUrl = groupIconUpload.secure_url;
     }
 
     if (!users || !groupName) {
-        throw new ApiError(400, "A groupName and Group Participates required")
+        res
+            .status(400)
+            .json({
+                message: "A groupName and Group Participates required"
+            })
     }
 
     let allUsers = users.split(/[,\s]+/).filter(id => id.trim() !== "");
     console.log("allUsers: ", allUsers);
 
     if (allUsers.length < 2) {
-        throw new ApiError(400, `You need atleast ${2 - allUsers.length} participates to create a group `)
+        res
+            .status(400)
+            .json({
+                message: `You need atleast ${2 - allUsers.length} participates to create a group `
+            })
     }
 
     // step#2: add yourself
@@ -160,7 +180,11 @@ const createGroupChat = asyncHandler(async (req, res) => {
             })
 
     } catch (error) {
-        throw new ApiError(400, `Something went wrong while creating GroupChat: ${error.message}`)
+        res
+            .status(400)
+            .json({
+                message: `Something went wrong while creating GroupChat: ${error.message}`
+            })
     }
 
 });
@@ -175,7 +199,11 @@ const renameGroup = asyncHandler(async (req, res) => {
     const { chatId, newChatName } = req.body;
 
     if ([chatId, newChatName].some((field) => field?.trim() === "")) {
-        throw new ApiError(400, "All fields are required...");
+        res
+            .status(400)
+            .json({
+                message: "All fields are required."
+            })
     }
 
     const updatedChat = await Chat.findByIdAndUpdate(
@@ -191,7 +219,11 @@ const renameGroup = asyncHandler(async (req, res) => {
         .populate("groupAdmin", "-password")
 
     if (!updatedChat) {
-        throw new ApiError(400, `GroupChat name not updated `)
+        res
+            .status(400)
+            .json({
+                message: `GroupChat name not updated `
+            })
     }
 
     res
@@ -211,7 +243,11 @@ const addToGroup = asyncHandler(async (req, res) => {
     const { chatId, userId } = req.body;
 
     if ([chatId, userId].some((field) => field?.trim() === "")) {
-        throw new ApiError(400, "All fields are required...");
+        res
+            .status(400)
+            .json({
+                message: "All fields are required."
+            })
     }
 
     const addUserUpdatedChat = await Chat.findByIdAndUpdate(
@@ -226,7 +262,11 @@ const addToGroup = asyncHandler(async (req, res) => {
         .populate("users", "-password")
         .populate("groupAdmin", "-password")
     if (!addUserUpdatedChat) {
-        throw new ApiError(400, `GroupChat name not updated `)
+        res
+            .status(400)
+            .json({
+                message: `GroupChat name not updated `
+            })
     }
 
     res
@@ -246,7 +286,11 @@ const removeFromGroup = asyncHandler(async (req, res) => {
     const { chatId, userId } = req.body;
 
     if ([chatId, userId].some((field) => field?.trim() === "")) {
-        throw new ApiError(400, "All fields are required...");
+        res
+            .status(400)
+            .json({
+                message: "All fields are required."
+            })
     }
 
     const removeUserUpdatedChat = await Chat.findByIdAndUpdate(
@@ -261,7 +305,11 @@ const removeFromGroup = asyncHandler(async (req, res) => {
         .populate("users", "-password")
         .populate("groupAdmin", "-password")
     if (!removeUserUpdatedChat) {
-        throw new ApiError(400, `GroupChat name not updated `)
+        res
+            .status(400)
+            .json({
+                message: `GroupChat name not updated `
+            })
     }
 
     res
@@ -285,7 +333,11 @@ const updateGroupIcon = asyncHandler(async (req, res) => {
     // input: chatId
     const { chatId } = req.body;
     if (!chatId) {
-        throw new ApiError(400, "ChatId not found")
+        res
+            .status(400)
+            .json({
+                message: "ChatId not found"
+            })
     }
 
     // step#1: check for profilePicture given or not... ( from middleware )
@@ -294,7 +346,11 @@ const updateGroupIcon = asyncHandler(async (req, res) => {
     if (req.file) {
         groupIconPath = req.file.path;
     } else {
-        throw new ApiError(400, "Profile pic not given")
+        res
+            .status(400)
+            .json({
+                message: "Profile pic not given"
+            })
     }
     console.log("pf path: ", groupIconPath);
 
@@ -305,7 +361,11 @@ const updateGroupIcon = asyncHandler(async (req, res) => {
     }
     console.log("profilePic: ", groupIconPic);
     if (!groupIconPic || !groupIconPic.url) {
-        throw new ApiError(500, "Something went wrong while updating profile pic");
+        res
+            .status(400)
+            .json({
+                message: "Something went wrong while uploading profile pic on cloudinary"
+            })
     }
 
     // step#3: delete old GroupIcon pic from cloudinary
@@ -313,7 +373,11 @@ const updateGroupIcon = asyncHandler(async (req, res) => {
     const chat = await Chat.findById(chatId);
     console.log("chat: ", chat);
     if (!chat) {
-        throw new ApiError(400, "Chat not found")
+        res
+            .status(400)
+            .json({
+                message: "Chat not found"
+            })
     }
     const prevPicture = chat.groupIcon;
 
@@ -343,7 +407,11 @@ const updateGroupIcon = asyncHandler(async (req, res) => {
         .populate("groupAdmin", "-password")
 
     if (!updateGroupIcon) {
-        throw new ApiError(400, "GroupIcon not updated")
+        res
+            .status(400)
+            .json({
+                message: "GroupIcon not updated"
+            })
     }
 
     res

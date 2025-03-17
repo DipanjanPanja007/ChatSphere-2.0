@@ -49,9 +49,9 @@ const Login = () => {
                 withCredentials: true,
             });
 
-            const responsedata = response.data
+            console.log(response.data.user);
+            const responsedata = response.data.user
 
-            // console.log(responsedata);
 
 
             // const userInfoForLocalStorage = await response.data.user.json()
@@ -85,12 +85,31 @@ const Login = () => {
 
 
         } catch (error) {
-            toast({
-                title: error.message,
-                variant: "error"
-            });
-            console.log("error: ", error)
-        } finally {
+            console.log("Error:", error);
+            if (error.response) {
+                // Server responded with a status outside the 2xx range
+                toast({
+                    title: error.response.data.message || "Invalid credentials!",
+                    variant: "error"
+                });
+                console.error("Response Error:", error.response.data);
+            } else if (error.request) {
+                // No response from server
+                toast({
+                    title: "No response from server!",
+                    variant: "error"
+                });
+                console.error("Request Error:", error.request);
+            } else {
+                // Other errors
+                toast({
+                    title: "Something went wrong!",
+                    variant: "error"
+                });
+                console.error("Axios Error:", error.message);
+            }
+        }
+        finally {
             setLoading(false);
         }
 

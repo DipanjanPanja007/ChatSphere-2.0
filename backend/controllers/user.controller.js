@@ -1,7 +1,6 @@
 import { User } from "../models/user.model.js"
 import { MemoryOtp } from "../models/memoryOtp.model.js"
 import asyncHandler from "express-async-handler";
-import { ApiError } from "../utils/ApiError.js";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { sendMail } from "../config/sendMail.js";
 
@@ -28,10 +27,11 @@ const generateAccessAndRefreshTokens = async (userId) => {
         // return Access and Refresh Token
         return { accessToken, refreshToken };
     } catch (error) {
-        throw new ApiError(
-            500,
-            "Something went wrong while generating Access and Refresh Token"
-        );
+        res
+            .status(500)
+            .json({
+                message: "Something went wrong while generating tokens"
+            })
     }
 };
 
@@ -62,7 +62,11 @@ const reqOTP = asyncHandler(async (req, res) => {
     // step#2: make sure for same user already not exists 
     const userExists = await User.findOne({ email });
     if (userExists) {
-        throw new ApiError(400, `User with email: ${email} already exists`)
+        res
+            .status(400)
+            .json({
+                message: `User with email: ${email} already exists`
+            })
     }
 
     // step#2: generate OTP
@@ -80,7 +84,11 @@ const reqOTP = asyncHandler(async (req, res) => {
     let otpPlaced = await MemoryOtp.create({ email, otp });
 
     if (!otpPlaced) {
-        throw new ApiError(500, "Something went wrong while saving OTP");
+        res
+            .status(500)
+            .json({
+                message: "Something went wrong while sending OTP"
+            })
     }
 
     // step#5: send response
@@ -107,7 +115,12 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // if any one not found, throw error: validation - not empty
     if ([name, email, password, otp].some((field) => field?.trim() === "")) {
-        throw new ApiError(400, "All fields are required...");
+        res
+            .status(400)
+            .json({
+                user: null,
+                message: "All fields are required..."
+            });
     }
 
 
@@ -159,7 +172,12 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // if user not created, throw error
     if (!user) {
-        throw new ApiError(400, "User creation failed ... ")
+        res
+            .status(400)
+            .json({
+                user: null,
+                message: "User creation failed "
+            });
     }
     const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
@@ -167,7 +185,12 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // Step#5: check for user creation
     if (!createdUser) {
-        throw new ApiError(500, "Something is wrong while registering you...");
+        res
+            .status(500)
+            .json({
+                user: null,
+                message: "Something went wrong while creating user"
+            });
     }
 
     // return info
@@ -198,21 +221,35 @@ const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body
 
     if ([email, password].some((field) => field?.trim() === "")) {
-        throw new ApiError(400, "All fields are required...");
+        res
+            .status(400)
+            .json({
+                user: null,
+                message: "All fields are required..."
+            });
     }
     // console.log(`from authUser, email: ${email} and password: ${password}`);
 
     // step#2: find user with given email
     const user = await User.findOne({ email });
+    console.log("user: ", user);
     if (!user) {
-        throw new ApiError(400, `User with email ${email} doesn't exists `);
+        res.status(400).json({
+            user: null,
+            message: "User not found"
+        });
     }
 
     // step#3: if user found, match password
     const checkPassword = await user.isPasswordCorrect(password);
 
     if (!checkPassword) {
-        throw new ApiError(400, "Incorrect password");
+        res
+            .status(400)
+            .json({
+                user: null,
+                message: "Incorrect password"
+            });
     }
     // console.log(user._id);
 
@@ -244,9 +281,9 @@ const loginUser = asyncHandler(async (req, res) => {
         .status(201)
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)
-        .json(
-            loggedInUser
-        )
+        .json({
+            user: loggedInUser
+        })
 
 });
 
@@ -307,7 +344,11 @@ const updateProfilePic = asyncHandler(async (req, res) => {
     if (req.file) {
         profilePicPath = req.file.path;
     } else {
-        throw new ApiError(400, "Profile pic not given")
+        res
+            .status(400)
+            .json({
+                message: "Profile picture not found"
+            })
     }
     console.log("pf path: ", profilePicPath);
 
@@ -318,7 +359,11 @@ const updateProfilePic = asyncHandler(async (req, res) => {
     }
     console.log("profilePic: ", profilePic);
     if (!profilePic || !profilePic.url) {
-        throw new ApiError(500, "Something went wrong while updating profile pic");
+        res
+            .status(400)
+            .json({
+                message: "Profile picture not uploaded successfully"
+            })
     }
 
     // step#3: delete old profile pic from cloudinary
@@ -339,7 +384,11 @@ const updateProfilePic = asyncHandler(async (req, res) => {
     const user = await User.findByIdAndUpdate(req.user._id, { profilePic: profilePic.url }, { new: true }).select("-password -refreshToken");
 
     if (!user) {
-        throw new ApiError(500, "Something went wrong while updating profile pic");
+        res
+            .status(400)
+            .json({
+                message: "Something went wrong while updating profile picture"
+            })
     }
 
     return res
