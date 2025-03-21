@@ -26,6 +26,7 @@ const GroupCharModal = ({ children }) => {
     const [search, setSearch] = useState("")
     const [groupChatName, setGroupChatName] = useState();
     const [selectedUsers, setSelectedUsers] = useState([]);
+    const [groupIcon, setGroupIcon] = useState(null);
     const [searchResult, setSearchResult] = useState([]);
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
@@ -99,18 +100,20 @@ const GroupCharModal = ({ children }) => {
             return;
         }
         try {
+            const formData = new FormData();
+            formData.append("groupName", groupChatName);
+            formData.append("users", selectedUsers.map(user => user._id).join(","));
+            formData.append("groupIcon", groupIcon);
             const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/chat/group`,
-                {
-                    groupName: groupChatName,
-                    users: JSON.stringify(selectedUsers.map(user => user._id))
-                },
+                formData,
                 {
                     headers: {
                         Authorization: `Bearer ${user.accessToken}`,
-                        'Content-Type': 'application/json',
+                        "Content-Type": "multipart/form-data",               // Required for FormData
                     }
                 }
             );
+            console.log("data", data);
 
             if (!data) {
                 console.log("group chat is not created");
@@ -124,15 +127,13 @@ const GroupCharModal = ({ children }) => {
             })
 
             // Clear the input fields and selected users
-            setSearch("")
-            setGroupChatName("");
-            setSearchResult([]);
-            setSelectedUsers([]);
+            handleClose();
 
             // // new created groupchat is selected if reqd........
             // setSelectedChat(data.data.data)
 
         } catch (error) {
+            console.log("Error while creating group chat", error);
             toast({
                 title: "Error occoured while creating group chat",
                 variant: "error",
@@ -142,9 +143,11 @@ const GroupCharModal = ({ children }) => {
     };
 
     const handleClose = () => {
-        setSearchResult([]);
         setSearch("")
+        setSearchResult([]);
         setSelectedUsers([]);
+        setGroupChatName("");
+        setGroupIcon(null);
     };
 
 
@@ -157,12 +160,28 @@ const GroupCharModal = ({ children }) => {
                     <DialogHeader>
                         <DialogTitle className="text-center mb-4" >Create Group Chat</DialogTitle>
                         <DialogDescription className="text-black text-md">
+                            {/* input for group chat name */}
                             <Input
                                 placeholder="Chat name"
                                 className={`p-2 my-4 ${darkMode ? "dark-bg-gray dark-font" : "light-bg-white light-font"}`}
                                 value={groupChatName}
-                                onChange={(e) => setGroupChatName(e.target.value)} />
+                                onChange={(e) => setGroupChatName(e.target.value)}
+                            />
 
+                            {/* input for group icon */}
+                            <Input
+                                type="file"
+                                id="groupIcon"
+                                name="groupIcon"
+                                accept="image/*"
+                                className={`p-2 my-4  ${darkMode ? "dark-bg-gray dark-font" : "light-bg-white light-font"}`}
+                                onChange={(e) => {
+                                    setGroupIcon(e.target.files[0]);
+                                }
+                                }
+                            />
+
+                            {/* input for adding users */}
                             <Input
                                 placeholder="Add Users..."
                                 className={`p-2 my-4 ${darkMode ? "dark-bg-gray dark-font" : "light-bg-white light-font"}`}
