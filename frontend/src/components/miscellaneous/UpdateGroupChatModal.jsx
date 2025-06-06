@@ -32,6 +32,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
 
 
     const handleAddUser = async (userToAdd) => {
+        console.log("selectedChat: ", selectedChat);
         if (selectedChat.users.find((u) => u._id === userToAdd._id)) {
             toast({
                 title: "Error occoured",
@@ -210,11 +211,23 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                 <DialogTrigger className=' rounded-md'><i class="fa-regular fa-eye "></i></DialogTrigger>
                 <DialogContent className={`${darkMode ? "dark-bg-black dark-font" : "light-bg-gray light-font"}`}>
                     <DialogHeader>
-                        <DialogTitle
-                            className='text-center font-bold text-3xl'
-                        >{selectedChat.chatName}
+                        <DialogTitle className='text-center font-bold text-3xl relative' >
+                            <div className="relative w-48 h-48 rounded-full mx-auto group bg-red-500">
+                                {/* group chat icon */}
+                                <img
+                                    src={selectedChat.groupIcon}
+                                    className="w-50 h-50 rounded-full object-cover transition duration-300 ease-in-out"
+                                />
+                                {/* Hazy Mist Overlay */}
+                                <div className="absolute inset-0 bg-black backdrop-blur-md opacity-0 group-hover:opacity-50 transition duration-300 ease-in-out rounded-full"></div>
+                            </div>
+
                         </DialogTitle>
                         <DialogDescription>
+                            <div
+                                className={`text-center font-bold text-3xl ${darkMode ? "dark-font" : "light-font"}`}
+                            >{selectedChat.chatName}
+                            </div>
                             {
                                 selectedChat.isGroupChat ?
                                     (<h3 className={`text=xl ${darkMode ? "dark-font" : "light-font"} `}>Group admin is: {selectedChat.groupAdmin.name}</h3>) : (<></>)
@@ -241,6 +254,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                                     value={groupChatName}
                                     onChange={(e) => (setGroupChatName(e.target.value))}
                                 />
+
                                 <Button
                                     className='bg-teal-500 text-white ml-3'
                                     onClick={handelRename}
