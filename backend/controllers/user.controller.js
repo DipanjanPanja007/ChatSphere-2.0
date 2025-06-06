@@ -168,6 +168,8 @@ const registerUser = asyncHandler(async (req, res) => {
         email: email,
         password: password,
         profilePic: profilePic?.url || undefined,
+        onlineStatus: false,
+        lastSeen: null,
     });
 
     // if user not created, throw error
@@ -265,6 +267,7 @@ const loginUser = asyncHandler(async (req, res) => {
     ).lean();
 
     loggedInUser.accessToken = accessToken;
+    loggedInUser.onlineStatus = true;
 
     console.log("loggedInUser: ", loggedInUser);
 
@@ -285,6 +288,28 @@ const loginUser = asyncHandler(async (req, res) => {
             user: loggedInUser
         })
 
+});
+
+const logoutUser = asyncHandler(async (req, res) => {
+    /*
+     * step#1: update user onlineStatus to false and lastSeen to current time
+     * step#2: send response
+     */
+
+
+    // step#2: update user onlineStatus to false and lastSeen to current time
+    const user = await User.findByIdAndUpdate(req.user._id, {
+        onlineStatus: false,
+        lastSeen: new Date()
+    }, { new: true }).select("-password -refreshToken");
+
+    // step#3: send response
+    return res
+        .status(200)
+        .json({
+            user,
+            message: "User logged out successfully"
+        })
 });
 
 const loginByGoogle = asyncHandler(async (req, res) => {
@@ -423,6 +448,7 @@ export {
     reqOTP,
     registerUser,
     loginUser,
+    logoutUser,
     allUsers,
     updateProfilePic,
     deleteProfilePic,
