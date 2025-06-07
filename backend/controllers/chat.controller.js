@@ -206,6 +206,15 @@ const renameGroup = asyncHandler(async (req, res) => {
             })
     }
 
+    const groupAdmin = await Chat.findById(chatId)?.groupAdmin;
+    if (groupAdmin.toString() !== req.user._id.toString()) {
+        return res
+            .status(403)
+            .json({
+                message: "Only group admin can rename the group."
+            })
+    }
+
     const updatedChat = await Chat.findByIdAndUpdate(
         chatId,
         {
@@ -219,14 +228,14 @@ const renameGroup = asyncHandler(async (req, res) => {
         .populate("groupAdmin", "-password")
 
     if (!updatedChat) {
-        res
+        return res
             .status(400)
             .json({
                 message: `GroupChat name not updated `
             })
     }
 
-    res
+    return res
         .status(201)
         .json({
             updatedChat
@@ -243,7 +252,7 @@ const addToGroup = asyncHandler(async (req, res) => {
     const { chatId, userId } = req.body;
 
     if ([chatId, userId].some((field) => field?.trim() === "")) {
-        res
+        return res
             .status(400)
             .json({
                 message: "All fields are required."
@@ -262,7 +271,7 @@ const addToGroup = asyncHandler(async (req, res) => {
         .populate("users", "-password")
         .populate("groupAdmin", "-password")
     if (!addUserUpdatedChat) {
-        res
+        return res
             .status(400)
             .json({
                 message: `GroupChat name not updated `
@@ -286,7 +295,7 @@ const removeFromGroup = asyncHandler(async (req, res) => {
     const { chatId, userId } = req.body;
 
     if ([chatId, userId].some((field) => field?.trim() === "")) {
-        res
+        return res
             .status(400)
             .json({
                 message: "All fields are required."
@@ -305,7 +314,7 @@ const removeFromGroup = asyncHandler(async (req, res) => {
         .populate("users", "-password")
         .populate("groupAdmin", "-password")
     if (!removeUserUpdatedChat) {
-        res
+        return res
             .status(400)
             .json({
                 message: `GroupChat name not updated `
@@ -317,9 +326,6 @@ const removeFromGroup = asyncHandler(async (req, res) => {
         .json(
             removeUserUpdatedChat
         )
-
-
-
 });
 
 const updateGroupIcon = asyncHandler(async (req, res) => {

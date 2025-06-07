@@ -5,59 +5,60 @@ import { Chat } from "../models/chat.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const sendMessage = asyncHandler(async (req, res) => {
-    // content, chatId, replyTo input from body
+    //  Extract content, chatId, and replyTo from request body
     const { content, chatId, replyTo } = req.body;
+    console.log("Request body:", req.body);
 
     let attachments = [];
 
-    // if media file is given, take it and upload on cloudinary
-    if (req.files.length > 0) {
-        console.log("req.files: ", req.files);
-
-        // Upload each file to Cloudinary
-        const uploadPromises = req.files.map(file => (
-            // console.log("file type", file.mimetype),
-            uploadOnCloudinary(file.path, file.filename))
+    // If files are present, upload each to Cloudinary
+    if (req.files && req.files.length > 0) {
+        const uploadPromises = req.files.map(file =>
+            uploadOnCloudinary(file.path, file.filename)
         );
 
         const uploadedFileURLs = await Promise.all(uploadPromises);
-        console.log("uploadedFileURLs", uploadedFileURLs);
+        console.log("Uploaded file URLs:", uploadedFileURLs);
 
-        if (uploadedFileURLs.length > 0) {
-            attachments = uploadedFileURLs.map((fileURL, index) => ({
-                url: fileURL,
-                type: req.files[index].mimetype.split("/")[0],
-            }));
-        }
+        attachments = uploadedFileURLs.map((file) => ({
+            url: file.secure_url,
+            fileType: file.resource_type, // e.g., image, video
+        }));
     }
 
-    if ((!content && attachments.length == 0) || !chatId) {
-        return res
-            .status(400)
-            .json({
-                message: "chatId and content both are required"
-            })
+    // Validation: At least content or one attachment must exist + chatId
+    if (!chatId) {
+        return res.status(400).json({
+            message: "chatId is required",
+        });
     }
 
-    let newMessage = {
+    if ((!content && attachments.length === 0)) {
+        return res.status(400).json({
+            message: "Either content or attachment is required",
+        });
+    }
+
+    // Prepare message object
+    const newMessage = {
         sender: req.user._id,
-        content: content,
-        attachments: attachments,
+        content,
+        attachments,
         chat: chatId,
-        replyTo: replyTo,
+        replyTo: replyTo || null,
         readBy: [req.user._id],
-    }
+    };
 
     try {
-        var message = await Message.create(newMessage)
+        let message = await Message.create(newMessage);
 
-        message = await message
-            .populate([
-                { path: "sender", select: "name profilePic" },
-                { path: "chat" },
-                { path: "replyTo" },
-                { path: "readBy", select: "name profilePic email" }
-            ]);
+        //  Populate references for frontend use
+        message = await message.populate([
+            { path: "sender", select: "name profilePic" },
+            { path: "chat" },
+            { path: "replyTo" },
+            { path: "readBy", select: "name profilePic email" }
+        ]);
 
         message = await User.populate(message, {
             path: "chat.users",
@@ -66,42 +67,38 @@ const sendMessage = asyncHandler(async (req, res) => {
 
         message = await Message.populate(message, {
             path: "chat.latestMessage"
-        })
+        });
 
-        await Chat.findByIdAndUpdate(req.body.chatId, {
+        // Update latest message in chat
+        await Chat.findByIdAndUpdate(chatId, {
             latestMessage: message,
-        })
+        });
 
-        console.log('message', message);
-
-        res
-            .status(201)
-            .json({
-                message
-            })
+        return res.status(201).json({ message });
 
     } catch (error) {
-        res
-            .status(400)
-            .json({
-                message: `Caught an error while sending message: ${error.message}`
-            })
+        return res.status(400).json({
+            message: `Caught an error while sending message: ${error.message}`,
+        });
     }
-})
+});
+
 
 const allMessages = asyncHandler(async (req, res) => {
     try {
         const messages = await Message.find({ chat: req.params.chatId })
             .populate("sender", "name profilePic email")
             .populate("chat")
+            .populate("replyTo", "attachments content sender")
+            .populate("readBy", "name profilePic email timestamps")
 
-        res
+        return res
             .status(201)
             .json({
                 messages
             })
     } catch (error) {
-        res
+        return res
             .status(400)
             .json({
                 "message": `caught error while fetching all messages for a chat ${error.message}`

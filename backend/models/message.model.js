@@ -14,6 +14,7 @@ const messageModel = mongoose.Schema(
         },
         attachments: [
             {
+                _id: false,
                 url: {
                     type: String,
                     required: true
