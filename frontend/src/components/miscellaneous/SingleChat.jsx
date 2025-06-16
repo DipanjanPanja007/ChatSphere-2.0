@@ -3,7 +3,6 @@ import { ChatState } from '@/Context/ChatProvider';
 import { useToast } from '@/hooks/use-toast';
 import React, { useEffect, useRef, useState } from 'react';
 import UpdateGroupChatModal from './UpdateGroupChatModal';
-import ProfileModal from './ProfileModal';
 import { io } from 'socket.io-client';
 import ScrollableChat from './ScrollableChat.jsx';
 import { Input } from '../ui/input';
@@ -12,6 +11,7 @@ import send_btn from '../../public/send_btn.png';
 
 import '../../App.css';
 import Loading from './Loading';
+import SenderModal from './SenderModal';
 
 const ENDPOINT = import.meta.env.VITE_BACKEND_URI;
 let socket, selectedChatCompare;
@@ -255,7 +255,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         {!selectedChat.isGroupChat ? (
                             <>
                                 {getSender(user, selectedChat.users)}
-                                <ProfileModal user={getSenderFull(user, selectedChat.users)} />
+                                <SenderModal user={getSenderFull(user, selectedChat.users)} />
                             </>
                         ) : (
                             <>

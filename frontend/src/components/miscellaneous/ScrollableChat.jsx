@@ -4,6 +4,7 @@ import { Avatar, AvatarImage } from '../ui/avatar'
 import { isSameUser, setSenderMargin } from '@/config/ChatLogic'
 import { ChatState } from '@/Context/ChatProvider'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 
 const ScrollableChat = ({ messages }) => {
     const { user, darkMode } = ChatState()
@@ -67,7 +68,81 @@ const ScrollableChat = ({ messages }) => {
                                             maxWidth: "90vw"
                                         }}
                                     >
+                                        {/* Dropdown icon inside bubble */}
+                                        <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <img
+                                                        src={
+                                                            darkMode
+                                                                ? "src/public/dropdown_darkmode.png"
+                                                                : "src/public/dropdown_lightmode.png"
+                                                        }
+                                                        className="w-5 cursor-pointer"
+                                                        alt="V"
+                                                    />
+                                                </DropdownMenuTrigger>
 
+                                                <DropdownMenuContent
+                                                    className={`rounded-md p-1 ${darkMode ? "bg-gray-800 text-white" : "bg-white text-black shadow-md"}`}
+                                                >
+                                                    <DropdownMenuItem
+                                                        className={`px-6 py-3 cursor-pointer flex items-center font-medium rounded-sm ${darkMode ? "hover:bg-slate-500 text-white" : "hover:bg-slate-300 text-black"
+                                                            }`}
+                                                    >
+                                                        <span></span>
+                                                        <span>Reply</span>
+
+                                                    </DropdownMenuItem>
+
+                                                    <DropdownMenuItem
+                                                        className={`px-6 py-3 cursor-pointer flex  items-center font-medium rounded-sm ${darkMode ? "hover:bg-slate-500 text-white" : "hover:bg-slate-300 text-black"
+                                                            }`}
+                                                    >
+                                                        <span></span>
+                                                        <span>Reply privately</span>
+
+                                                    </DropdownMenuItem>
+
+                                                    <DropdownMenuItem
+                                                        className={`px-6 py-3 cursor-pointer flex items-center font-medium rounded-sm ${darkMode ? "hover:bg-slate-500 text-white" : "hover:bg-slate-300 text-black"
+                                                            }`}
+                                                    >
+                                                        <span></span>
+                                                        <span>Message sender</span>
+
+                                                    </DropdownMenuItem>
+
+                                                    <DropdownMenuItem
+                                                        className={`px-6 py-3 cursor-pointer flex items-center font-medium rounded-sm ${darkMode ? "hover:bg-slate-500 text-white" : "hover:bg-slate-300 text-black"
+                                                            }`}
+                                                    >
+                                                        <span></span>
+                                                        <span>Copy text</span>
+
+                                                    </DropdownMenuItem>
+
+                                                    <DropdownMenuItem
+                                                        className={`px-6 py-3 cursor-pointer flex items-center font-medium rounded-sm ${darkMode ? "hover:bg-slate-500 text-white" : "hover:bg-slate-300 text-black"
+                                                            }`}
+                                                    >
+                                                        <span></span>
+                                                        <span>React</span>
+
+                                                    </DropdownMenuItem>
+
+                                                    <DropdownMenuItem
+                                                        className={`px-6 py-3 cursor-pointer flex items-center font-medium rounded-sm ${darkMode ? "hover:bg-slate-500 text-white" : "hover:bg-slate-300 text-black"
+                                                            }`}
+                                                    >
+                                                        <span></span>
+                                                        <span>Forward</span>
+
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+
+                                        </div>
 
                                         {/* Attachments */}
                                         {currMessage.attachments?.length > 0 && (
