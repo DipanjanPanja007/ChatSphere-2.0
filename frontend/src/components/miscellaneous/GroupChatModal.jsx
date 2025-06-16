@@ -16,6 +16,7 @@ import axios from 'axios'
 import { ChatState } from '@/Context/ChatProvider'
 import UserListItem from './UserListItem'
 import SkeletonUI from './Skeleton'
+import Loading from './Loading'
 
 
 
@@ -29,6 +30,7 @@ const GroupCharModal = ({ children }) => {
     const [groupIcon, setGroupIcon] = useState(null);
     const [searchResult, setSearchResult] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [createGroupLoading, setCreateGroupLoading] = useState(false);
     const { toast } = useToast();
 
 
@@ -85,6 +87,7 @@ const GroupCharModal = ({ children }) => {
     };
 
     const handelSubmit = async () => {
+        setCreateGroupLoading(true);
         if (!groupChatName) {
             toast({
                 title: "A group name is necessary !! ",
@@ -120,7 +123,8 @@ const GroupCharModal = ({ children }) => {
             }
 
             setChats([data.createdGroupChat, ...chats]);
-
+            setCreateGroupLoading(false);
+            setSelectedChat(data.createdGroupChat);
             toast({
                 title: `Group chat: ${groupChatName} is created`,
                 variant: "success",
@@ -213,6 +217,9 @@ const GroupCharModal = ({ children }) => {
                             Create Group
                         </Button>
                     </DialogFooter>
+                    {
+                        createGroupLoading && (<Loading />)
+                    }
                 </DialogContent>
             </Dialog>
 

@@ -158,21 +158,37 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
         socket.emit('stop_typing', selectedChat._id);
 
+        const formData = new FormData();
+        formData.append('content', newMessage);
+        formData.append('chatId', selectedChat._id);
+        if (replyTo) {
+            formData.append('replyTo', replyTo);
+        }
+
+        const mediaFiles = document.getElementById('media-files').files;
+        // console.log("mediaFiles:", mediaFiles);
+        if (mediaFiles.length > 0) {
+            for (let i = 0; i < mediaFiles.length; i++) {
+                formData.append('files', mediaFiles[i]);
+            }
+        }
+
         try {
             setNewMessage('');
             const { data } = await axios.post(
                 `${ENDPOINT}/api/message`,
+                formData
+                ,
                 {
-                    content: newMessage,
-                    chatId: selectedChat._id,
-                },
-                {
+                    withCredentials: true,
                     headers: {
                         Authorization: `Bearer ${user.accessToken}`,
+                        "Content-Type": 'multipart/form-data',
                     },
                 }
             );
-            // console.log(data)
+
+            console.log(data)
 
             socket.emit('new_message', data.message);
             setMessages((prev) => [...prev, data.message]);
@@ -261,21 +277,39 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         </div>
 
                         {/* Input Field */}
-                        <form onKeyDown={sendMessageByEnter} className="rounded-sm flex">
+                        <form onKeyDown={sendMessageByEnter} className="rounded-sm flex align-middle justify-center items-center w-full">
                             {isTyping ? <div>Typing...</div> : null}
-                            <Input
-                                variant={'filled'}
-                                className={`${darkMode ? "dark-bg-black dark-font" : "light-bg-white light-font"} p-2 border-none`}
-                                placeholder="Type a message..."
-                                onChange={typingHandler}
-                                value={newMessage}
-                                ref={inputRef}
-                                autoFocus
-                            />
+                            <div className={`${darkMode ? "dark-bg-black dark-font" : "light-bg-white light-font"} p-2 border-none flex w-full rounded-lg`}>
+                                <label className={`inline-flex items-center cursor-pointer justify-center hover:bg-slate-400 px-2.5 rounded-full`}>
+                                    <input
+                                        type="file"
+                                        id="media-files"
+                                        accept="image/*,video/*,audio/*,.zip,.rar,.7z"
+                                        multiple
+                                        className={`hidden ${darkMode ? "dark-bg-black dark-font" : "light-bg-white light-font"} p-2 border-none`}
+
+                                    />
+                                    <img
+                                        src={darkMode ? "src/public/plus_darkmode.png" : "src/public/plus_lightmode.png"}
+                                        className="size-4"
+                                        alt="+"
+                                    />
+
+                                </label>
+                                <Input
+                                    className={`${darkMode ? "dark-bg-black dark-font" : "light-bg-white light-font"} p-2 border-none focus-visible:outline-none focus-visible:ring-0 focus-visible:border-none`}
+                                    placeholder="Type a message..."
+                                    onChange={typingHandler}
+                                    value={newMessage}
+                                    ref={inputRef}
+                                    autoFocus
+                                />
+
+                            </div>
                             <button
                                 type="submit"
                                 onClick={sendMessageByButton}
-                                className={`rounded-full ml-2 ${darkMode ? "dark-bg-black" : "light-bg-white"} `}
+                                className={`rounded-full ml-2 ${darkMode ? "dark-bg-black" : "light-bg-white"} h-9 w-9`}
                             >
                                 <img src={send_btn} className="w-10 h-9 rounded-full opacity-90 hover:opacity-100" alt="Send Button" />
                             </button>
