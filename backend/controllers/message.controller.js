@@ -3,61 +3,86 @@ import { Message } from "../models/message.model.js"
 import { User } from "../models/user.model.js"
 import { Chat } from "../models/chat.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import mime from "mime-types";
+import path from "path";
+import fs from "fs";
 
 const sendMessage = asyncHandler(async (req, res) => {
-    //  Extract content, chatId, and replyTo from request body
     const { content, chatId, replyTo } = req.body;
-    console.log("Request body:", req.body);
+    console.log("📥 Request body:", req.body);
+
+    if (!chatId) {
+        return res.status(400).json({ message: "chatId is required" });
+    }
 
     let attachments = [];
 
-    // If files are present, upload each to Cloudinary
-    if (req.files && req.files.length > 0) {
-        const uploadPromises = req.files.map(file =>
-            uploadOnCloudinary(file.path, file.filename)
-        );
+    if (req.files?.length > 0) {
+        const uploadPromises = req.files.map((file) => {
+            const mimeType = mime.lookup(file.originalname);
+            const baseName = path.parse(file.originalname).name;
+            const finalName = `${Date.now()}-${baseName}`;
 
-        const uploadedFileURLs = await Promise.all(uploadPromises);
-        console.log("Uploaded file URLs:", uploadedFileURLs);
-
-        attachments = uploadedFileURLs.map((file) => ({
-            url: file.secure_url,
-            fileType: file.resource_type, // e.g., image, video
-        }));
-    }
-
-    // Validation: At least content or one attachment must exist + chatId
-    if (!chatId) {
-        return res.status(400).json({
-            message: "chatId is required",
+            // Only upload images, videos, and audio
+            if (
+                mimeType?.startsWith("image/") ||
+                mimeType?.startsWith("video/") ||
+                mimeType?.startsWith("audio/")
+            ) {
+                return uploadOnCloudinary(file.path, finalName);
+            } else {
+                // Cleanup skipped files
+                fs.unlinkSync(file.path);
+                return { skipped: true };
+            }
         });
+
+        const uploadedFiles = await Promise.all(uploadPromises);
+
+        attachments = req.files.map((file, index) => {
+            const uploaded = uploadedFiles[index];
+            const mimeType = mime.lookup(file.originalname);
+
+            const resolveType = (type) => {
+                if (!type) return "document";
+                if (type === "image/gif") return "gif";
+                if (type.startsWith("image/")) return "image";
+                if (type.startsWith("video/")) return "video";
+                if (type.startsWith("audio/")) return "audio";
+                return "document";
+            };
+
+            if (uploaded?.skipped) return null;
+            if (!uploaded?.secure_url) return null;
+
+            return {
+                url: uploaded.secure_url,
+                fileType: resolveType(mimeType),
+            };
+        }).filter(Boolean);
     }
 
-    if ((!content && attachments.length === 0)) {
-        return res.status(400).json({
-            message: "Either content or attachment is required",
-        });
+    if (!content && attachments.length === 0) {
+        return res.status(400).json({ message: "Either content or attachment is required" });
     }
-
-    // Prepare message object
-    const newMessage = {
-        sender: req.user._id,
-        content,
-        attachments,
-        chat: chatId,
-        replyTo: replyTo || null,
-        readBy: [req.user._id],
-    };
 
     try {
+        const newMessage = {
+            sender: req.user._id,
+            content,
+            attachments,
+            chat: chatId,
+            replyTo: replyTo || null,
+            readBy: [req.user._id],
+        };
+
         let message = await Message.create(newMessage);
 
-        //  Populate references for frontend use
         message = await message.populate([
             { path: "sender", select: "name profilePic" },
             { path: "chat" },
             { path: "replyTo" },
-            { path: "readBy", select: "name profilePic email" }
+            { path: "readBy", select: "name profilePic email" },
         ]);
 
         message = await User.populate(message, {
@@ -66,19 +91,17 @@ const sendMessage = asyncHandler(async (req, res) => {
         });
 
         message = await Message.populate(message, {
-            path: "chat.latestMessage"
+            path: "chat.latestMessage",
         });
 
-        // Update latest message in chat
-        await Chat.findByIdAndUpdate(chatId, {
-            latestMessage: message,
-        });
+        await Chat.findByIdAndUpdate(chatId, { latestMessage: message });
 
         return res.status(201).json({ message });
 
-    } catch (error) {
+    } catch (err) {
+        console.error("❌ Message send error:", err);
         return res.status(400).json({
-            message: `Caught an error while sending message: ${error.message}`,
+            message: `Caught an error while sending message: ${err.message}`,
         });
     }
 });

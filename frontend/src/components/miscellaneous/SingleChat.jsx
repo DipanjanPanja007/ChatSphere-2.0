@@ -19,7 +19,7 @@ let socket, selectedChatCompare;
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     const inputRef = useRef(null);
     const { toast } = useToast();
-    const { user, selectedChat, setSelectedChat, notification, setNotification, darkMode } = ChatState();
+    const { user, selectedChat, setSelectedChat, notification, setNotification, darkMode, replyTo } = ChatState();
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [newMessage, setNewMessage] = useState('');

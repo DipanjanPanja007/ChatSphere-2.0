@@ -1,6 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs"
 import "dotenv/config"
+import path from "path";
+import mime from "mime-types";
 
 // Configuration of cloudinary
 
@@ -12,34 +14,40 @@ cloudinary.config({
 
 
 const uploadOnCloudinary = async (localFilePath, picName) => {
-
     try {
         if (!localFilePath) {
-            console.log("local path not found when uploading on cloudinary");
+            console.log("Local file path missing.");
             return null;
         }
 
-        /* 
-         * todo:  Delete previous Image if exists
-         */
+        const mimeType = mime.lookup(localFilePath);
+        const ext = path.extname(localFilePath).toLowerCase();
 
-        // upload file on Cloudinary
-        const response = await cloudinary.uploader.upload(localFilePath, { public_id: `${picName}` })
-        // file uploaded successfully
-        console.log("file uploaded successfully", response.url);
-        console.log(response);
+        // Determine correct resource_type
+        let resourceType = "auto";
+
+        if (mimeType?.startsWith("image/")) resourceType = "image";
+        else if (mimeType?.startsWith("video/")) resourceType = "video";
+        else if (mimeType?.startsWith("audio/")) resourceType = "video"; // still needed
+        else resourceType = null; // ✅ for PDFs, ZIPs, DOCX, etc.
+
+        if (!resourceType) return { skipped: true };
+
+        const response = await cloudinary.uploader.upload(localFilePath, {
+            public_id: picName,
+            resource_type: resourceType,
+        });
+
+        console.log("✅ Uploaded:", response.secure_url);
         return response;
 
     } catch (error) {
-        // remove the locally saved temp file if upload fails
-        console.log(error);
-
+        console.error("Cloudinary Upload Error:", error);
         return null;
     } finally {
-        fs.unlinkSync(localFilePath)
+        fs.unlinkSync(localFilePath);
     }
 };
-
 
 const deleteFromCloudinary = async (imageUrl) => {
 

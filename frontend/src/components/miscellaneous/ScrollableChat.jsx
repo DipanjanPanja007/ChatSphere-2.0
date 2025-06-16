@@ -6,7 +6,7 @@ import { ChatState } from '@/Context/ChatProvider'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip"
 
 const ScrollableChat = ({ messages }) => {
-    const { user } = ChatState()
+    const { user, darkMode } = ChatState()
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -19,7 +19,7 @@ const ScrollableChat = ({ messages }) => {
 
     return (
         <div className="flex flex-col scroll-smooth h-full w-full">
-            <ScrollArea className="px-4 w-full overflow-y-auto">
+            <ScrollArea className="px-2 w-full overflow-y-auto">
                 {messages &&
                     messages.map((currMessage, index) => (
                         <div
@@ -45,12 +45,9 @@ const ScrollableChat = ({ messages }) => {
                                 )}
 
                             {/* Message bubble */}
-                            <span
-                                className={`rounded-[1.5rem] px-4 py-2 max-w-[75%] 
-                                ${currMessage.sender._id === user._id ? "bg-[#BFA7FA]" : "bg-[#F0B99E]"} text-black`}
+                            <div
+                                className="relative group max-w-[75%]"
                                 style={{
-                                    wordBreak: "break-word", // Ensures text breaks within words
-                                    overflowWrap: "break-word", // Wraps long words properly
                                     marginLeft:
                                         currMessage.sender._id !== user._id
                                             ? setSenderMargin(messages, currMessage, index, user._id)
@@ -58,8 +55,100 @@ const ScrollableChat = ({ messages }) => {
                                     marginTop: isSameUser(messages, currMessage, index) ? "3px" : "10px",
                                 }}
                             >
-                                {currMessage.content}
-                            </span>
+                                {/* Dropdown Icon - appears on hover */}
+
+                                <div className="relative group w-fit max-w-[90vw]">
+                                    {/* Message bubble */}
+                                    <div
+                                        className={`block rounded-[0.5rem] px-2 pt-2 pb-1.5 text-black ${currMessage.sender._id === user._id ? "bg-[#BFA7FA]" : "bg-[#F0B99E]"}`}
+                                        style={{
+                                            wordBreak: "break-word",
+                                            overflowWrap: "break-word",
+                                            maxWidth: "90vw"
+                                        }}
+                                    >
+
+
+                                        {/* Attachments */}
+                                        {currMessage.attachments?.length > 0 && (
+                                            <div className="space-y-2 mb-2 w-full max-w-[90vw]">
+                                                {currMessage.attachments.map((file, i) => {
+                                                    const type = file.fileType;
+
+                                                    if (type === "image" || type === "gif") {
+                                                        return (
+                                                            <img
+                                                                key={i}
+                                                                src={file.url}
+                                                                alt={`attachment-${i}`}
+                                                                className="w-full max-w-xs rounded-md object-contain"
+                                                            />
+                                                        );
+                                                    }
+
+                                                    if (type === "video") {
+                                                        return (
+                                                            <video
+                                                                key={i}
+                                                                controls
+                                                                className="w-full max-w-xs rounded-md"
+                                                            >
+                                                                <source src={file.url} type="video/mp4" />
+                                                                Your browser does not support the video tag.
+                                                            </video>
+                                                        );
+                                                    }
+
+                                                    if (type === "audio" || file.url.endsWith(".mp3") || file.url.endsWith(".wav")) {
+                                                        return (
+                                                            <audio
+                                                                key={i}
+                                                                controls
+                                                                className="min-w-[80rem]"
+                                                                style={{ minWidth: "50%", maxWidth: "100%" }}
+                                                            >
+                                                                <source src={file.url} />
+                                                                Your browser does not support the audio element.
+                                                            </audio>
+                                                        );
+                                                    }
+
+                                                    return (
+                                                        <a
+                                                            key={i}
+                                                            href={file.url}
+                                                            download
+                                                            className="block text-sm text-blue-600 underline break-words"
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            Download {file.fileType || 'file'}
+                                                        </a>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+
+                                        {/* Content and timestamp */}
+                                        <div className="flex justify-between items-end gap-2">
+                                            <div className="flex-1 break-words">{currMessage.content}</div>
+                                            <span className="text-[10px] text-gray-700 whitespace-nowrap">
+                                                {new Date(currMessage.createdAt).toLocaleTimeString([], {
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                    hour12: false
+                                                })}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+
+
                         </div>
                     ))}
                 <div ref={messagesEndRef} />

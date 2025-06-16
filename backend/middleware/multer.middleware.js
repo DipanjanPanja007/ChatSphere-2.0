@@ -10,6 +10,13 @@ const storage = multer.diskStorage({
   }
 })
 
-export const upload = multer({ storage: storage })
+export
+  const upload = multer({
+    storage,
+    fileFilter: function (req, file, cb) {
+      cb(null, true); // ✅ Accept all types
+    }
+  });
+
 
 export const uploadMultiple = multer({ storage: storage }).array("files", 10); // Max 10 files
