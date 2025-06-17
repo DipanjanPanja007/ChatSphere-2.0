@@ -5,12 +5,50 @@ import { isSameUser, setSenderMargin } from '@/config/ChatLogic'
 import { ChatState } from '@/Context/ChatProvider'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
-import RenderReplyPreview from './RenderReplyPreview'
+import { useToast } from '@/hooks/use-toast'
+import axios from 'axios'
 
 
 const ScrollableChat = ({ messages }) => {
-    const { user, darkMode, setReplyTo, selectedChat } = ChatState()
+    const { user, chats, darkMode, setReplyTo, selectedChat, setSelectedChat } = ChatState()
     const messagesEndRef = useRef(null);
+    const { toast } = useToast();
+
+    const accessChat = async (userId) => {
+        try {
+            // setLoadingChat(true);
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.accessToken}`,
+                    'Content-Type': 'application/json',
+                }
+            };
+
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URI}/api/chat`,
+                { userId },
+                config
+            );
+
+            console.log("Access Chat Response:", response.data);
+
+
+
+            if (!chats.find((c) => c._id === response.data._id)) setChats([response.data, ...chats])
+
+            setSelectedChat(response.data)
+
+
+        } catch (error) {
+            console.error("Error fetching chats:", error);
+            toast({
+                title: "Error occoured while fetching chats",
+                variant: "error"
+            });
+        } finally {
+            // setLoadingChat(false);
+        }
+    };
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
@@ -26,7 +64,7 @@ const ScrollableChat = ({ messages }) => {
                 {messages &&
                     messages.map((currMessage, index) => {
                         const isSender = currMessage.sender._id === user._id;
-
+                        console.log("Current Message:", currMessage);
                         return (
                             <div
                                 className={`flex w-full group relative ${isSender ? "justify-end" : "justify-start"}`}
@@ -92,9 +130,13 @@ const ScrollableChat = ({ messages }) => {
                                                         <span>Reply</span>
                                                     </DropdownMenuItem>
 
-                                                    {selectedChat.isGroupChat && <DropdownMenuItem
+                                                    {(selectedChat.isGroupChat && currMessage.sender._id !== user._id) && <DropdownMenuItem
                                                         className={`px-6 py-3 cursor-pointer flex  items-center font-medium rounded-sm ${darkMode ? "hover:bg-slate-500 text-white" : "hover:bg-slate-300 text-black"
                                                             }`}
+                                                        onClick={() => {
+                                                            accessChat(currMessage.sender._id)
+                                                            setReplyTo(currMessage)
+                                                        }}
                                                     >
                                                         <span></span>
                                                         <span>Reply privately</span>
@@ -128,7 +170,49 @@ const ScrollableChat = ({ messages }) => {
                                         </div>
 
                                         {/* Reply Preview */}
-                                        {currMessage.replyTo && RenderReplyPreview(currMessage.replyTo, darkMode)}
+                                        {currMessage.replyTo && (
+                                            <div
+                                                className={`mb-1 p-2 rounded text-sm ${currMessage.sender._id === user._id ? "bg-violet-400" : "bg-orange-300"} cursor-pointer `}
+                                            >
+                                                <div className="font-semibold mb-1">
+                                                    {
+                                                        currMessage.replyTo.sender._id === user._id ? "You" : currMessage.replyTo.sender.name || "Unknown User"
+                                                    }
+                                                    {
+                                                        currMessage.replyTo.chat._id !== selectedChat._id && ` - ${currMessage.replyTo.chat.chatName}`
+                                                    }
+                                                    {/* <span>{currMessage.replyTo.sender.name || "aaaa"}</span> */}
+                                                </div>
+
+
+                                                {currMessage.replyTo.attachments?.length > 0 && (
+                                                    <div className="mt-1">
+                                                        {currMessage.replyTo?.attachments?.[0]?.fileType === 'image' || currMessage.replyTo?.attachments?.[0]?.fileType === 'gif' ? (
+                                                            <img
+                                                                src={currMessage.replyTo.attachments[0].url}
+                                                                className="max-w-[5rem] max-h-[5rem] rounded object-contain"
+                                                                alt="reply media"
+                                                            />
+                                                        ) : currMessage.replyTo?.attachments?.[0]?.fileType === 'video' ? (
+                                                            <div className="w-20 h-10 bg-black text-white text-xs flex items-center justify-center rounded">
+                                                                Video file
+                                                            </div>
+                                                        ) : currMessage.replyTo?.attachments?.[0]?.fileType === 'audio' ? (
+                                                            <div className="w-20 h-10 bg-gray-400 text-white text-xs flex items-center justify-center rounded">
+                                                                Audio file
+                                                            </div>
+                                                        ) : (
+                                                            <div className="text-xs text-blue-600 underline break-all">
+                                                                {currMessage.replyTo.attachments[0].fileType || 'file'}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                                {currMessage.replyTo.content && (
+                                                    <div className="italic line-clamp-2">{currMessage.replyTo.content}</div>
+                                                )}
+                                            </div>
+                                        )}
 
                                         {/* Attachments */}
                                         {currMessage.attachments?.length > 0 && (
@@ -196,8 +280,8 @@ const ScrollableChat = ({ messages }) => {
                         );
                     })}
                 <div ref={messagesEndRef} />
-            </ScrollArea>
-        </div>
+            </ScrollArea >
+        </div >
     );
 };
 

@@ -81,7 +81,13 @@ const sendMessage = asyncHandler(async (req, res) => {
         message = await message.populate([
             { path: "sender", select: "name profilePic" },
             { path: "chat" },
-            { path: "replyTo" },
+            {
+                path: "replyTo",
+                populate: {
+                    path: "sender",
+                    select: "name email profilePic"
+                }
+            },
             { path: "readBy", select: "name profilePic email" },
         ]);
 
@@ -112,22 +118,27 @@ const allMessages = asyncHandler(async (req, res) => {
         const messages = await Message.find({ chat: req.params.chatId })
             .populate("sender", "name profilePic email")
             .populate("chat")
-            .populate("replyTo", "attachments content sender")
-            .populate("readBy", "name profilePic email timestamps")
+            .populate({
+                path: "replyTo",
+                populate: [{
+                    path: "sender",
+                    select: "name profilePic email"
+                }, {
+                    path: "chat",
+                    select: "chatName groupIcon"
+                }
+                ]
+            })
+            .populate("readBy", "name profilePic email");
 
-        return res
-            .status(201)
-            .json({
-                messages
-            })
+        return res.status(201).json({ messages });
     } catch (error) {
-        return res
-            .status(400)
-            .json({
-                "message": `caught error while fetching all messages for a chat ${error.message}`
-            })
+        return res.status(400).json({
+            message: `Caught error while fetching all messages for a chat: ${error.message}`
+        });
     }
 });
+
 
 const addReaction = asyncHandler(async (req, res) => {
 

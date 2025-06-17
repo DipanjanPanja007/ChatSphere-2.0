@@ -1,14 +1,17 @@
 import React from 'react'
+import { ChatState } from '@/Context/ChatProvider';
+
 
 const RenderReplyPreview = (replyTo) => {
     const type = replyTo?.attachments?.[0]?.fileType;
+    const { user } = ChatState();
 
     return (
         <div
             className={`mb-1 p-2 rounded text-sm bg-violet-400 cursor-pointer `}
         >
             <div className="font-semibold mb-1">
-                {replyTo.sender.name}
+                <span>{replyTo.sender}</span>
             </div>
 
 
