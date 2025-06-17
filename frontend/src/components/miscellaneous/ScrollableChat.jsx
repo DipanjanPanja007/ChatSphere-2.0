@@ -64,7 +64,7 @@ const ScrollableChat = ({ messages }) => {
                 {messages &&
                     messages.map((currMessage, index) => {
                         const isSender = currMessage.sender._id === user._id;
-                        console.log("Current Message:", currMessage);
+                        {/* console.log("Current Message:", currMessage); */ }
                         return (
                             <div
                                 className={`flex w-full group relative ${isSender ? "justify-end" : "justify-start"}`}
@@ -153,6 +153,23 @@ const ScrollableChat = ({ messages }) => {
                                                     <DropdownMenuItem
                                                         className={`px-6 py-3 cursor-pointer flex items-center font-medium rounded-sm ${darkMode ? "hover:bg-slate-500 text-white" : "hover:bg-slate-300 text-black"
                                                             }`}
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText(currMessage.content)
+                                                                .then(() => {
+                                                                    console.log("Text copied to clipboard");
+                                                                    toast({
+                                                                        title: "Message copied to clipboard",
+                                                                        variant: "success"
+                                                                    });
+                                                                })
+                                                                .catch((err) => {
+                                                                    console.error("Failed to copy text: ", err);
+                                                                    toast({
+                                                                        title: "Can't copy text, try again",
+                                                                        variant: "error"
+                                                                    });
+                                                                });
+                                                        }}
                                                     >
                                                         <span></span>
                                                         <span>Copy text</span>
