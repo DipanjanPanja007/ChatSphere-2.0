@@ -280,8 +280,8 @@ const ScrollableChat = ({ messages }) => {
                         );
                     })}
                 <div ref={messagesEndRef} />
-            </ScrollArea >
-        </div >
+            </ScrollArea>
+        </div>
     );
 };
 
