@@ -19,29 +19,13 @@ let socket, selectedChatCompare;
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     const inputRef = useRef(null);
     const { toast } = useToast();
-    const { user, selectedChat, setSelectedChat, notification, setNotification, darkMode, replyTo } = ChatState();
+    const { user, selectedChat, setSelectedChat, notification, setNotification, darkMode, replyTo, setReplyTo } = ChatState();
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [newMessage, setNewMessage] = useState('');
     const [socketConnected, setSocketConnected] = useState(false);
     const [typing, setTyping] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
-
-    // Escape key to exit chat
-    useEffect(() => {
-        const handleEscKey = (event) => {
-            if (event.key === 'Escape') {
-                setSelectedChat('');
-            }
-        };
-
-        window.addEventListener('keydown', handleEscKey);
-
-        return () => {
-            setNewMessage('');
-            window.removeEventListener('keydown', handleEscKey);
-        };
-    }, [setSelectedChat]);
 
     // Socket setup
     useEffect(() => {
@@ -74,6 +58,37 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }, [user, selectedChat]);
 
 
+    // Escape key to exit chat
+    useEffect(() => {
+        const handleEscKey = (event) => {
+            if (event.key === 'Escape') {
+                if (replyTo) {
+                    setReplyTo(null);
+                } else {
+                    setSelectedChat('');
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleEscKey);
+
+        return () => {
+            setNewMessage('');
+            window.removeEventListener('keydown', handleEscKey);
+        };
+    }, [replyTo, setReplyTo, setSelectedChat]);
+
+
+    useEffect(() => {
+        if (replyTo && inputRef.current) {
+            // Give time for reply UI to render first
+            setTimeout(() => {
+                inputRef.current?.focus();
+            }, 0);
+        }
+    }, [replyTo]);
+
+
 
     // Fetch messages when a chat is selected and remove notificaiton of that chat
     useEffect(() => {
@@ -90,7 +105,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             setNotification((prevNotifications) => prevNotifications.filter(noti => noti.chat._id !== selectedChat._id));
         }
 
-    }, [selectedChat]);
+    }, [selectedChat, replyTo]);
 
     // Handle incoming messages and notifications
     useEffect(() => {
@@ -162,7 +177,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         formData.append('content', newMessage);
         formData.append('chatId', selectedChat._id);
         if (replyTo) {
-            formData.append('replyTo', replyTo);
+            formData.append('replyTo', replyTo._id);
         }
 
         const mediaFiles = document.getElementById('media-files').files;
@@ -189,15 +204,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             );
 
             console.log(data)
-
             socket.emit('new_message', data.message);
             setMessages((prev) => [...prev, data.message]);
+
         } catch (error) {
             toast({
                 title: 'Error occurred while sending message',
                 variant: 'error',
             });
             console.error(`Error: ${error.message}`);
+        } finally {
+            setReplyTo(null);
         }
         // }
     };
@@ -277,7 +294,71 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         </div>
 
                         {/* Input Field */}
-                        <form onKeyDown={sendMessageByEnter} className="rounded-sm flex align-middle justify-center items-center w-full">
+                        {replyTo && (
+                            <div
+                                className={`relative rounded-lg px-4 py-2 w-full flex items-start justify-between gap-4 ${darkMode ? "bg-slate-700 text-white" : "bg-slate-200 text-black"}`}
+                            >
+                                {/* Left side: Sender + content */}
+                                <div className="flex flex-col flex-grow max-w-[75%]">
+                                    <p className="text-md font-semibold truncate">
+                                        {replyTo.sender.name}
+                                        {replyTo.chat._id !== selectedChat._id && ` - ${replyTo.chat.chatName}`}
+                                    </p>
+                                    <span className="truncate text-sm">{replyTo.content}</span>
+                                </div>
+
+                                {/* Right side: media preview */}
+                                {replyTo.attachments?.length > 0 && (
+                                    <div className="flex-shrink-0">
+                                        {(() => {
+                                            const attachment = replyTo.attachments[0];
+                                            const type = attachment.fileType;
+
+                                            if (type === 'image' || type === 'gif') {
+                                                return (
+                                                    <img
+                                                        src={attachment.url}
+                                                        className="max-w-[5rem] max-h-[5rem] rounded object-contain"
+                                                        alt="reply media"
+                                                    />
+                                                );
+                                            } else if (type === 'video') {
+                                                return (
+                                                    <div className="w-20 h-10 bg-black text-white text-xs flex items-center justify-center rounded">
+                                                        Video file
+                                                    </div>
+                                                );
+                                            } else if (type === 'audio') {
+                                                return (
+                                                    <div className="w-20 h-10 bg-gray-400 text-white text-xs flex items-center justify-center rounded">
+                                                        Audio file
+                                                    </div>
+                                                );
+                                            } else {
+                                                return (
+                                                    <div className="text-xs text-blue-600 underline break-all max-w-[5rem]">
+                                                        {type || 'File'}
+                                                    </div>
+                                                );
+                                            }
+                                        })()}
+                                    </div>
+                                )}
+
+                                {/* Close button */}
+                                <button
+                                    onClick={() => setReplyTo(null)}
+                                    className="ml-2 text-lg font-bold text-gray-500 hover:text-red-500"
+                                    aria-label="Cancel reply"
+                                    type="button"
+                                >
+                                    ×
+                                </button>
+                            </div>
+                        )}
+
+                        <form onKeyDown={sendMessageByEnter}
+                            className={`rounded-sm flex align-middle justify-center items-center w-full ${darkMode ? "dark-bg-black" : "light-bg-white"} pr-1.5`}>
                             {isTyping ? <div>Typing...</div> : null}
                             <div className={`${darkMode ? "dark-bg-black dark-font" : "light-bg-white light-font"} p-2 border-none flex w-full rounded-lg`}>
                                 <label className={`inline-flex items-center cursor-pointer justify-center hover:bg-slate-400 px-2.5 rounded-full`}>
