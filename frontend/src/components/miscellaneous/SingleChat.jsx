@@ -12,6 +12,7 @@ import send_btn from '../../public/send_btn.png';
 import '../../App.css';
 import Loading from './Loading';
 import SenderModal from './SenderModal';
+import EmojiPicker from 'emoji-picker-react';
 
 const ENDPOINT = import.meta.env.VITE_BACKEND_URI;
 let socket, selectedChatCompare;
@@ -26,6 +27,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     const [socketConnected, setSocketConnected] = useState(false);
     const [typing, setTyping] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
     // Socket setup
     useEffect(() => {
@@ -257,6 +259,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         sendMessage();
     }
 
+    const handleEmojiClick = (emojiData) => {
+        setNewMessage(prev => prev + emojiData.emoji);
+        setShowEmojiPicker(false);
+        inputRef.current?.focus();
+    };
+
     return (
         <>
             {selectedChat ? (
@@ -357,26 +365,54 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             </div>
                         )}
 
-                        <form onKeyDown={sendMessageByEnter}
-                            className={`rounded-sm flex align-middle justify-center items-center w-full ${darkMode ? "dark-bg-black" : "light-bg-white"} pr-1.5`}>
-                            {isTyping ? <div>Typing...</div> : null}
-                            <div className={`${darkMode ? "dark-bg-black dark-font" : "light-bg-white light-font"} p-2 border-none flex w-full rounded-lg`}>
-                                <label className={`inline-flex items-center cursor-pointer justify-center hover:bg-slate-400 px-2.5 rounded-full`}>
+                        <form
+                            onKeyDown={sendMessageByEnter}
+                            className={`flex items-center w-full ${darkMode ? "dark-bg-black" : "light-bg-white"} pr-1.5 pl-0.5 py-1 rounded-full`}
+                        >
+                            {isTyping && <div>Typing...</div>}
+
+                            <div
+                                className={`${darkMode ? "dark-bg-black dark-font" : "light-bg-white light-font"} px-1 border-none flex w-full rounded-full items-center`}
+                            >
+                                {/* Upload Button */}
+                                <label className="inline-flex items-center cursor-pointer justify-center hover:bg-slate-400 p-1.5 rounded-full">
                                     <input
                                         type="file"
                                         id="media-files"
                                         accept="image/*,video/*,audio/*,.zip,.rar,.7z"
                                         multiple
-                                        className={`hidden ${darkMode ? "dark-bg-black dark-font" : "light-bg-white light-font"} p-2 border-none`}
-
+                                        className="hidden"
                                     />
                                     <img
                                         src={darkMode ? "src/public/plus_darkmode.png" : "src/public/plus_lightmode.png"}
-                                        className="size-4"
+                                        className="w-5 h-5"
                                         alt="+"
                                     />
-
                                 </label>
+
+                                {/* Emoji Button */}
+                                <div className="relative">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowEmojiPicker(prev => !prev)}
+                                        className="inline-flex items-center justify-center hover:bg-slate-400 p-1.5 rounded-full"
+                                    >
+                                        <img
+                                            src={darkMode ? "src/public/reaction_darkmode.png" : "src/public/reaction_lightmode.png"}
+                                            className="w-5 h-5"
+                                            alt="emoji"
+                                        />
+                                    </button>
+
+                                    {/* Emoji Picker */}
+                                    {showEmojiPicker && (
+                                        <div className="absolute bottom-10 left-0 z-20">
+                                            <EmojiPicker onEmojiClick={handleEmojiClick} height={350} width={300} />
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Input */}
                                 <Input
                                     className={`${darkMode ? "dark-bg-black dark-font" : "light-bg-white light-font"} p-2 border-none focus-visible:outline-none focus-visible:ring-0 focus-visible:border-none`}
                                     placeholder="Type a message..."
@@ -385,8 +421,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                     ref={inputRef}
                                     autoFocus
                                 />
-
                             </div>
+
+                            {/* Send Button */}
                             <button
                                 type="submit"
                                 onClick={sendMessageByButton}
@@ -394,8 +431,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             >
                                 <img src={send_btn} className="w-10 h-9 rounded-full opacity-90 hover:opacity-100" alt="Send Button" />
                             </button>
-
                         </form>
+
                     </div>
                 </>
             ) : (
