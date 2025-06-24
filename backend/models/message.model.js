@@ -37,6 +37,7 @@ const messageModel = mongoose.Schema(
         },
         reactions: [
             {
+                _id: false,
                 userId: {
                     type: mongoose.Types.ObjectId,
                     ref: "User",

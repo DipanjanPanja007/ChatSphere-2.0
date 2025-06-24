@@ -140,7 +140,7 @@ const allMessages = asyncHandler(async (req, res) => {
 });
 
 
-const addReaction = asyncHandler(async (req, res) => {
+const updateReaction = asyncHandler(async (req, res) => {
 
     /**
      * step#1: Extract messageId and reaction from request body
@@ -176,8 +176,14 @@ const addReaction = asyncHandler(async (req, res) => {
         );
 
         if (existingReaction) {
-            // step#4: if user already reacted, update the reaction
-            existingReaction.reaction = reaction;
+            // if user reacted with same reaction, remove it
+            if (existingReaction.reaction === reaction) {
+                message.reactions = message.reactions.filter(r => r.userId.toString() !== req.user._id.toString());
+            }
+            else {
+                // step#4: if user already reacted, update the reaction
+                existingReaction.reaction = reaction;
+            }
         } else {
             // step#5: if user has not reacted, push the reaction to the message's reactions array
             message.reactions.push({
@@ -188,10 +194,12 @@ const addReaction = asyncHandler(async (req, res) => {
 
         await message.save();
 
-        return res.status(200).json({
-            message: "Reaction updated successfully",
-            data: message,
-        });
+        return res
+            .status(200)
+            .json({
+                message: "Reaction updated successfully",
+                data: message,
+            });
     } catch (error) {
         return res.status(500).json({
             message: `Error updating reaction: ${error.message}`,
@@ -199,60 +207,10 @@ const addReaction = asyncHandler(async (req, res) => {
     }
 });
 
-const removeReaction = asyncHandler(async (req, res) => {
-
-    /**
-     * step#1: Extract messageId and reaction from request body
-     * step#2: Validate that messageId and reaction are provided
-     * step#3: FindById the message by messageId AndUpdate as pull the reaction with userId
-     */
-
-    // step#1: Extract messageId and reaction from request body
-    const { messageId, reaction } = req.body;
-
-    // step#2: Validate that messageId and reaction are provided
-    if (!messageId || !reaction) {
-        return res.status(400).json({
-            message: "messageId is required",
-        });
-    }
-
-    try {
-
-        // step#3: FindById the message by messageId AndUpdate as pull the reaction with userId
-        const updatedMessage = await Message.findByIdAndUpdate(
-            messageId,
-            {
-                $pull: {
-                    reactions: { userId: req.user._id }
-                }
-            },
-            { new: true }
-        )
-        if (!updatedMessage) {
-            return res.status(404).json({
-                message: "Message not found",
-            });
-        }
-        return res.status(200).json({
-            message: "Reaction removed successfully",
-            data: updatedMessage,
-        });
-
-    } catch (error) {
-        return res.status(500).json({
-            message: `Error removing reaction: ${error.message}`,
-        });
-
-    }
-
-});
-
 
 
 export {
     sendMessage,
     allMessages,
-    addReaction,
-    removeReaction
+    updateReaction,
 }
