@@ -71,7 +71,13 @@ const ScrollableChat = ({ messages, setMessages }) => {
 
         const updatedMessage = response.data.data;
 
-        setMessages((prevMessages) => prevMessages.map(msg => msg._id === updatedMessage._id ? updatedMessage : msg))
+        setMessages((prevMessages) =>
+            prevMessages.map((msg) =>
+                msg._id === updatedMessage._id
+                    ? { ...msg, reactions: updatedMessage.reactions }
+                    : msg
+            )
+        );
 
         setActiveReactionPicker(null);
 

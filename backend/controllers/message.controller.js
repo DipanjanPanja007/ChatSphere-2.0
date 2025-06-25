@@ -129,7 +129,11 @@ const allMessages = asyncHandler(async (req, res) => {
                 }
                 ]
             })
-            .populate("readBy", "name profilePic email");
+            .populate("readBy", "name profilePic email")
+            .populate({
+                path: "reactions.userId",
+                select: "_id name profilePic"
+            });
 
         return res.status(201).json({ messages });
     } catch (error) {
@@ -191,6 +195,8 @@ const updateReaction = asyncHandler(async (req, res) => {
                 reaction,
             });
         }
+        message.updatedAt = Date.now();
+        await message.populate("reactions.userId", "_id name profilePic");
 
         await message.save();
 
