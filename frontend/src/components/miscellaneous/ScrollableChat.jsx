@@ -353,20 +353,55 @@ const ScrollableChat = ({ messages, setMessages }) => {
 
                                     {/* display reactions  */}
                                     {currMessage.reactions && currMessage.reactions.length > 0 && (
-                                        <div className="flex items-center gap-0 -mt-2 mx-1 relative z-10 cursor-pointer">
-                                            {currMessage.reactions.slice(0, 3).map((r, i) => (
-                                                <span
-                                                    key={i}
-                                                    className={`text-sm p-0`}
-                                                >
-                                                    {r.reaction}
-                                                </span>
-                                            ))}
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger>
+                                                <div className="flex items-center gap-0 -mt-2 mx-1 relative z-10 cursor-pointer">
+                                                    {currMessage.reactions.slice(0, 3).map((r, i) => (
+                                                        <span
+                                                            key={i}
+                                                            className={`text-sm p-0`}
+                                                        >
+                                                            {r.reaction}
+                                                        </span>
+                                                    ))}
 
-                                            {currMessage.reactions.length > 3 && (
-                                                <span className="text-md pr-0.5 ">...</span>
-                                            )}
-                                        </div>
+                                                    {currMessage.reactions.length > 3 && (
+                                                        <span className="text-md pr-0.5 ">...</span>
+                                                    )}
+                                                </div>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent className='bg-slate-500'>
+                                                <div className="flex flex-col gap-1 mt-2">
+                                                    {currMessage.reactions.map((reaction, idx) => (
+                                                        <DropdownMenuItem
+                                                            key={idx}
+                                                            className="flex items-center justify-between w-full max-w-xs rounded-xl bg-[#1f1f1f] px-3 py-2 shadow-md border border-gray-700 text-white"
+                                                            onClick={() => reaction.userId._id === user._id && handleReaction(currMessage._id, reaction.reaction)}
+                                                        >
+                                                            {/* Left: Profile + Name */}
+                                                            <div className="flex items-center gap-2">
+                                                                <img
+                                                                    src={reaction.userId.profilePic}
+                                                                    alt={reaction.userId.name}
+                                                                    className="w-8 h-8 rounded-full object-cover"
+                                                                />
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-sm font-semibold truncate max-w-[7rem]">
+                                                                        {reaction.userId._id === user._id ? "You" : reaction.userId.name}
+                                                                    </span>
+                                                                    {reaction.userId._id === user._id && <span className="text-xs text-gray-400">Click to remove</span>}
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Right: Emoji */}
+                                                            <div className="text-2xl">{reaction.reaction}</div>
+                                                        </DropdownMenuItem>
+
+                                                    ))}
+                                                </div>
+
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     )}
                                 </div>
                             </div>
