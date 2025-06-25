@@ -64,9 +64,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     useEffect(() => {
         const handleEscKey = (event) => {
             if (event.key === 'Escape') {
-                if (replyTo) {
+                if (showEmojiPicker) {
+                    setShowEmojiPicker(false);
+                } else if (replyTo) {
                     setReplyTo(null);
-                } else {
+                } else if (selectedChat) {
                     setSelectedChat('');
                 }
             }
@@ -75,10 +77,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         window.addEventListener('keydown', handleEscKey);
 
         return () => {
-            setNewMessage('');
             window.removeEventListener('keydown', handleEscKey);
         };
-    }, [replyTo, setReplyTo, setSelectedChat]);
+    }, [showEmojiPicker, replyTo, selectedChat, setShowEmojiPicker, setReplyTo, setSelectedChat]);
+
 
 
     useEffect(() => {
@@ -174,6 +176,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         }
 
         socket.emit('stop_typing', selectedChat._id);
+        setShowEmojiPicker(false);
 
         const formData = new FormData();
         formData.append('content', newMessage);
@@ -261,7 +264,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
     const handleEmojiClick = (emojiData) => {
         setNewMessage(prev => prev + emojiData.emoji);
-        setShowEmojiPicker(false);
         inputRef.current?.focus();
     };
 
@@ -298,7 +300,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     <div className={`flex flex-col justify-between w-full h-[91%] rounded-lg p-3 bg-chatBox-pic ${darkMode ? "bg-chatBox-bg-dark" : "bg-chatBox-bg-light"}`}>
                         {/* Chat Messages Container */}
                         <div className="flex mb-3 overflow-y-auto">
-                            {loading ? <><Loading /></> : <ScrollableChat messages={messages} />}
+                            {loading ? <><Loading /></> : <ScrollableChat messages={messages} setMessages={setMessages} />}
                         </div>
 
                         {/* Input Field */}

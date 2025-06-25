@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarImage } from '../ui/avatar'
 import { isSameUser, setSenderMargin } from '@/config/ChatLogic'
@@ -7,12 +7,14 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/com
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { useToast } from '@/hooks/use-toast'
 import axios from 'axios'
+import EmojiPicker from 'emoji-picker-react'
 
 
-const ScrollableChat = ({ messages }) => {
+const ScrollableChat = ({ messages, setMessages }) => {
     const { user, chats, darkMode, setReplyTo, selectedChat, setSelectedChat } = ChatState()
     const messagesEndRef = useRef(null);
     const { toast } = useToast();
+    const [activeReactionPicker, setActiveReactionPicker] = useState(null);
 
     const accessChat = async (userId) => {
         try {
@@ -50,6 +52,31 @@ const ScrollableChat = ({ messages }) => {
         }
     };
 
+    const handleReaction = async (messageId, reaction) => {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.accessToken}`,
+                'Content-Type': 'application/json',
+            }
+        };
+        const response = await axios.put(
+            `${import.meta.env.VITE_BACKEND_URI}/api/message/updateReaction`,
+            {
+                messageId,
+                reaction
+            },
+            config
+        )
+        console.log("Reaction Response:", response);
+
+        const updatedMessage = response.data.data;
+
+        setMessages((prevMessages) => prevMessages.map(msg => msg._id === updatedMessage._id ? updatedMessage : msg))
+
+        setActiveReactionPicker(null);
+
+    };
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
     };
@@ -64,7 +91,7 @@ const ScrollableChat = ({ messages }) => {
                 {messages &&
                     messages.map((currMessage, index) => {
                         const isSender = currMessage.sender._id === user._id;
-                        {/* console.log("Current Message:", currMessage); */ }
+                        console.log("Current Message:", currMessage);
                         return (
                             <div
                                 className={`flex w-full group relative ${isSender ? "justify-end" : "justify-start"}`}
@@ -97,11 +124,13 @@ const ScrollableChat = ({ messages }) => {
                                     }}
                                 >
                                     <div
-                                        className={`block rounded-[0.5rem] px-2 pt-2 pb-1.5 text-black relative ${isSender ? "bg-[#BFA7FA]" : "bg-[#F0B99E]"}`}
+                                        className={`block rounded-[0.5rem] px-2 pt-2 pb-1.5 text-black relative min-w-16 ${isSender ? "bg-[#BFA7FA]" : "bg-[#F0B99E]"}`}
+
                                         style={{
                                             wordBreak: "break-word",
                                             overflowWrap: "break-word",
-                                            maxWidth: "90vw"
+                                            maxWidth: "90vw",
+                                            minWidth: "7.5vw",
                                         }}
                                     >
                                         <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
@@ -275,6 +304,7 @@ const ScrollableChat = ({ messages }) => {
                                             </div>
                                         )}
 
+                                        {/* message sending time */}
                                         <div className="flex justify-between items-end gap-2">
                                             <div className="flex-1 break-words">{currMessage.content}</div>
                                             <span className="text-[10px] text-gray-700 whitespace-nowrap">
@@ -287,11 +317,51 @@ const ScrollableChat = ({ messages }) => {
                                         </div>
                                     </div>
 
+                                    {/* reaction image */}
                                     <img
                                         src="src/public/reaction_darkmode.png"
                                         alt="Reaction"
                                         className={`hidden cursor-pointer group-hover:block absolute top-1/2 -translate-y-1/2 ${isSender ? "right-full mr-2" : "left-full ml-2"} w-5 h-5`}
+                                        onClick={() => activeReactionPicker !== currMessage._id ? setActiveReactionPicker(currMessage._id) : setActiveReactionPicker(null)}
                                     />
+                                    {activeReactionPicker === currMessage._id && (
+                                        <div
+                                            className={`absolute z-50 max-w-[90vw]`}
+                                            style={{
+                                                top: "100%",
+                                                left: isSender ? "auto" : "0",
+                                                right: isSender ? "0" : "auto",
+                                                maxWidth: 'calc(100vw - 1rem)',
+                                                overflow: 'hidden',
+                                            }}
+                                        >
+                                            <EmojiPicker
+                                                height={350}
+                                                width={300}
+                                                onEmojiClick={(emojiData) =>
+                                                    handleReaction(currMessage._id, emojiData.emoji)
+                                                }
+                                            />
+                                        </div>
+                                    )}
+
+                                    {/* display reactions  */}
+                                    {currMessage.reactions && currMessage.reactions.length > 0 && (
+                                        <div className="flex items-center gap-0 -mt-2 mx-1 relative z-10 cursor-pointer">
+                                            {currMessage.reactions.slice(0, 3).map((r, i) => (
+                                                <span
+                                                    key={i}
+                                                    className={`text-sm p-0`}
+                                                >
+                                                    {r.reaction}
+                                                </span>
+                                            ))}
+
+                                            {currMessage.reactions.length > 3 && (
+                                                <span className="text-md pr-0.5 ">...</span>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         );
