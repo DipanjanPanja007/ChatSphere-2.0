@@ -83,6 +83,8 @@ const ScrollableChat = ({ messages, setMessages }) => {
 
     };
 
+
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
     };
@@ -177,13 +179,15 @@ const ScrollableChat = ({ messages, setMessages }) => {
                                                         <span>Reply privately</span>
                                                     </DropdownMenuItem>}
 
-                                                    <DropdownMenuItem
-                                                        className={`px-6 py-3 cursor-pointer flex items-center font-medium rounded-sm ${darkMode ? "hover:bg-slate-500 text-white" : "hover:bg-slate-300 text-black"
-                                                            }`}
-                                                    >
-                                                        <span></span>
-                                                        <span>Message sender</span>
-                                                    </DropdownMenuItem>
+                                                    {currMessage.sender._id !== user._id &&
+                                                        <DropdownMenuItem
+                                                            className={`px-6 py-3 cursor-pointer flex items-center font-medium rounded-sm ${darkMode ? "hover:bg-slate-500 text-white" : "hover:bg-slate-300 text-black"
+                                                                }`}
+                                                            onClick={() => accessChat(currMessage.sender._id)}
+                                                        >
+                                                            <span></span>
+                                                            <span>Message sender</span>
+                                                        </DropdownMenuItem>}
 
                                                     <DropdownMenuItem
                                                         className={`px-6 py-3 cursor-pointer flex items-center font-medium rounded-sm ${darkMode ? "hover:bg-slate-500 text-white" : "hover:bg-slate-300 text-black"
@@ -213,6 +217,7 @@ const ScrollableChat = ({ messages, setMessages }) => {
                                                     <DropdownMenuItem
                                                         className={`px-6 py-3 cursor-pointer flex items-center font-medium rounded-sm ${darkMode ? "hover:bg-slate-500 text-white" : "hover:bg-slate-300 text-black"
                                                             }`}
+                                                        onClick={() => activeReactionPicker !== currMessage._id ? setActiveReactionPicker(currMessage._id) : setActiveReactionPicker(null)}
                                                     >
                                                         <span></span>
                                                         <span>React</span>
