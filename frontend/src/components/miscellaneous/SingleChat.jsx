@@ -140,6 +140,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         };
     }, [selectedChat, notification, fetchAgain, messages, newMessage, darkMode]);
 
+    // Clear replyTo if the selected chat changes
+    useEffect(() => {
+        if (replyTo && selectedChat) {
+            if (replyTo.chat._id !== selectedChat._id) {
+                setReplyTo(null);
+            }
+        }
+    }, [replyTo, selectedChat]);
+
     // Handle typing logic
     const typingHandler = (e) => {
         setNewMessage(e.target.value);
@@ -297,7 +306,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     </div>
 
                     {/* Main Chat Container */}
-                    <div className={`flex flex-col justify-between w-full h-[91%] rounded-lg p-3 bg-chatBox-pic ${darkMode ? "bg-chatBox-bg-dark" : "bg-chatBox-bg-light"}`}>
+                    <div className={`flex flex-col justify-end w-full h-[91%] rounded-lg p-3 bg-chatBox-pic ${darkMode ? "bg-chatBox-bg-dark" : "bg-chatBox-bg-light"}`}>
                         {/* Chat Messages Container */}
                         <div className="flex mb-3 overflow-y-auto">
                             {loading ? <><Loading /></> : <ScrollableChat messages={messages} setMessages={setMessages} />}

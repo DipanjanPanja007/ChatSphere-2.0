@@ -99,7 +99,7 @@ const ScrollableChat = ({ messages, setMessages }) => {
                 {messages &&
                     messages.map((currMessage, index) => {
                         const isSender = currMessage.sender._id === user._id;
-                        console.log("Current Message:", currMessage);
+                        {/* console.log("Current Message:", currMessage); */ }
                         return (
                             <div
                                 className={`flex w-full group relative ${isSender ? "justify-end" : "justify-start"}`}
