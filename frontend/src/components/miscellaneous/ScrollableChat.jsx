@@ -147,8 +147,8 @@ const ScrollableChat = ({ messages, setMessages }) => {
                                                     <img
                                                         src={
                                                             darkMode
-                                                                ? "src/public/dropdown_darkmode.png"
-                                                                : "src/public/dropdown_lightmode.png"
+                                                                ? "/src/public/dropdown_darkmode.png"
+                                                                : "/src/public/dropdown_lightmode.png"
                                                         }
                                                         className="w-5 cursor-pointer"
                                                         alt="V"
@@ -330,7 +330,7 @@ const ScrollableChat = ({ messages, setMessages }) => {
 
                                     {/* reaction image */}
                                     <img
-                                        src="src/public/reaction_darkmode.png"
+                                        src="/src/public/reaction_darkmode.png"
                                         alt="Reaction"
                                         className={`hidden cursor-pointer group-hover:block absolute top-1/2 -translate-y-1/2 ${isSender ? "right-full mr-2" : "left-full ml-2"} w-5 h-5`}
                                         onClick={() => activeReactionPicker !== currMessage._id ? setActiveReactionPicker(currMessage._id) : setActiveReactionPicker(null)}
