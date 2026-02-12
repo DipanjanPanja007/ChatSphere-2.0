@@ -177,7 +177,7 @@ const SideDrawer = () => {
                                 setDarkMode(!darkMode);
                             }}
                         >
-                            <img src={darkMode ? "/src/public/lightMode_img.png" : "/src/public/darkMode_img.png"} className="w-8 h-8 rounded-full" alt="Dark Mode" />
+                            <img src={darkMode ? "/lightMode_img.png" : "/darkMode_img.png"} className="w-8 h-8 rounded-full" alt="Dark Mode" />
                         </button>
                     </div>
 

@@ -7,7 +7,7 @@ import { io } from 'socket.io-client';
 import ScrollableChat from './ScrollableChat.jsx';
 import { Input } from '../ui/input';
 import axios from 'axios';
-import send_btn from '../../public/send_btn.png';
+import send_btn from '/send_btn.png';
 
 import '../../App.css';
 import Loading from './Loading';
@@ -397,7 +397,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                         className="hidden"
                                     />
                                     <img
-                                        src={darkMode ? "/src/public/plus_darkmode.png" : "/src/public/plus_lightmode.png"}
+                                        src={darkMode ? "/plus_darkmode.png" : "/plus_lightmode.png"}
                                         className="w-5 h-5"
                                         alt="+"
                                     />
@@ -411,7 +411,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                         className="inline-flex items-center justify-center hover:bg-slate-400 p-1.5 rounded-full"
                                     >
                                         <img
-                                            src={darkMode ? "/src/public/reaction_darkmode.png" : "/src/public/reaction_lightmode.png"}
+                                            src={darkMode ? "/reaction_darkmode.png" : "/reaction_lightmode.png"}
                                             className="w-5 h-5"
                                             alt="emoji"
                                         />
