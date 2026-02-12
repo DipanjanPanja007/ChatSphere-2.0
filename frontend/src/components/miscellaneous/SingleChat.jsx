@@ -140,13 +140,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         };
     }, [selectedChat, notification, fetchAgain, messages, newMessage, darkMode]);
 
-    // Clear replyTo if the selected chat changes
+    // Clear replyTo if the selected chat changes   -> but it cuts out reply privately
     useEffect(() => {
         if (replyTo && selectedChat) {
-            if (replyTo.chat._id !== selectedChat._id) {
+            if (!selectedChat.isGroupChat || !selectedChat.users.some(u => u._id === replyTo.sender._id)) {
                 setReplyTo(null);
             }
         }
+        // console.log("replyTo :", replyTo);
+        // console.log("selectedChat changed:", selectedChat);
     }, [replyTo, selectedChat]);
 
     // Handle typing logic
